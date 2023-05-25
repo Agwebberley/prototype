@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-10&lvv7o7k94!!o12g0fko)rz=7sml0io9!a=9)eb17$m(z%v=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['helloworld-env.eba-dasmkpze.us-west-2.elasticbeanstalk.com']
 
 # Application definition
 
@@ -105,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Pacific'
 
 USE_I18N = True
 
