@@ -1,3 +1,5 @@
+# This is a Django model class for a data object with fields for name, address, phone, and email, and
+# methods for returning a string representation and an absolute URL.
 from django.db import models
 from django.urls import reverse
 

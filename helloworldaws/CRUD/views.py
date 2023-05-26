@@ -1,3 +1,5 @@
+# This is a set of Django views for creating, updating, and deleting instances of a Data model, with a
+# list view to display all instances.
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
 from .models import Data
