@@ -2,10 +2,10 @@
 
 {% block content %}
   <h1>Delete Data</h1>
-  <p>Are you sure you want to delete "{{ object.title }}"?</p>
-  <form method="data">
+  <p>Are you sure you want to delete "{{ object.name }}"?</p>
+  <form method="post">
     {% csrf_token %}
-    <button type="submit">Yes, delete it</button>
+    <button type="submit" class="btn btn-danger">Yes, delete it</button>
     <a href="{% url 'data_list' %}">No, cancel</a>
   </form>
 {% endblock %}

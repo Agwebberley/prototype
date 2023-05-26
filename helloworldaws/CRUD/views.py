@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
 from .models import Data
 from .forms import DataForm
@@ -8,18 +8,21 @@ class DataListView(ListView):
     model = Data
     template_name = 'data_list.html'
 
-class DataCreateView(View):
-    def get(self, request):
-        form = DataForm()
-        return render(request, 'data_form.html', {'form': form})
-    def post(self, request):
-        form = DataForm(request.POST)
-        if form.is_valid():
-            data = form.save(commit=False)
-            data.author = request.user
-            data.save()
-            return redirect('data_list')
-        return render(request, 'data_form.html', {'form': form})
+class DataCreateView(CreateView):
+    model = Data
+    form_class = DataForm
+    template_name = 'data_form.html'
+    success_url = reverse_lazy('data_list')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('data_list')
+
+
+        
 
 class DataUpdateView(UpdateView):
     model = Data
