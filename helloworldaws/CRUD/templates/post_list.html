@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Blog Posts</h1>
+  <h1>Data</h1>
   <ul>
-    {% for post in object_list %}
-      <li><a href="{% url 'post_update' post.pk %}">{{ post.title }}</a></li>
+    {% for data in object_list %}
+      <li><a href="{% url 'data_update' data.pk %}">{{ data.title }}</a></li>
     {% endfor %}
   </ul>
-  <a href="{% url 'post_create' %}">Create a new post</a>
+  <a href="{% url 'data_create' %}">add more data</a>
 {% endblock %}

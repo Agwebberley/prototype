@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Delete Blog Post</h1>
+  <h1>Delete Data</h1>
   <p>Are you sure you want to delete "{{ object.title }}"?</p>
-  <form method="post">
+  <form method="data">
     {% csrf_token %}
     <button type="submit">Yes, delete it</button>
-    <a href="{% url 'post_list' %}">No, cancel</a>
+    <a href="{% url 'data_list' %}">No, cancel</a>
   </form>
 {% endblock %}
