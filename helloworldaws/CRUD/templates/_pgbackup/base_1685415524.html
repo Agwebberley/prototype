@@ -1,12 +1,11 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en"> 
     <head> 
         <meta charset="UTF-8"> 
         <title>{% block title %}{{ APPNAME }}{% endblock %}</title>         
         <script>/* Pinegrow Interactions, do not remove */ (function(){try{if(!document.documentElement.hasAttribute('data-pg-ia-disabled')) { window.pgia_small_mq=typeof pgia_small_mq=='string'?pgia_small_mq:'(max-width:767px)';window.pgia_large_mq=typeof pgia_large_mq=='string'?pgia_large_mq:'(min-width:768px)';var style = document.createElement('style');var pgcss='html:not(.pg-ia-no-preview) [data-pg-ia-hide=""] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show=""] {opacity:1;visibility:visible;display:block;}';if(document.documentElement.hasAttribute('data-pg-id') && document.documentElement.hasAttribute('data-pg-mobile')) {pgia_small_mq='(min-width:0)';pgia_large_mq='(min-width:99999px)'} pgcss+='@media ' + pgia_small_mq + '{ html:not(.pg-ia-no-preview) [data-pg-ia-hide="mobile"] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show="mobile"] {opacity:1;visibility:visible;display:block;}}';pgcss+='@media ' + pgia_large_mq + '{html:not(.pg-ia-no-preview) [data-pg-ia-hide="desktop"] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show="desktop"] {opacity:1;visibility:visible;display:block;}}';style.innerHTML=pgcss;document.querySelector('head').appendChild(style);}}catch(e){console&&console.log(e);}})()</script>         
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet"/> 
-        <script src="https://cdn.tailwindcss.com/"></script>         
-        <link rel="stylesheet" href="blocks.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet"/>
+        <script src="https://cdn.tailwindcss.com/"></script>
     </head>     
     <body class="bg-white dark:bg-gray-900"> 
         <header class="container mx-auto"> 
@@ -20,20 +19,23 @@
             <div class="bg-white dark:bg-gray-900 mx-auto w-1/5"> 
                 <nav class="mt-20 p-4"> 
                     <ul class="list-none text-black dark:text-white text-center"> 
-                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative"> <a href="{% url 'index' %}" class="text-blue-500 dark:text-blue-300">Home</a> 
+                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative">
+                            <a href="{% url 'index' %}" class="text-blue-500 dark:text-blue-300">Home</a> 
                         </li>                         
-                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative"> <a href="{% url 'data_list' %}" class="text-blue-500 dark:text-blue-300">Customers</a> 
+                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative">
+                            <a href="{% url 'data_list' %}" class="text-blue-500 dark:text-blue-300">Customers</a> 
                         </li>                         
-                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative"> <a href="{% url 'log' %}" class="text-blue-500 dark:text-blue-300">Log</a> 
+                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative">
+                            <a href="{% url 'log' %}" class="text-blue-500 dark:text-blue-300">Log</a> 
                         </li>                         
                     </ul>                     
                 </nav>                 
-            </div>             
+            </div>
             <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white"> 
                 {% block content %} {% endblock %}                 
                 <div class="absolute bg-black dark:bg-gray-900 h-10 right-0 top-0"></div>                 
             </div>             
-        </div>         
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>         
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
     </body>     
 </html>

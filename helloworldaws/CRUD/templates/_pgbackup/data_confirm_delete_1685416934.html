@@ -1,13 +1,13 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet"/> 
         <script src="https://cdn.tailwindcss.com/"></script>
-
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>{% if form.instance.pk %}Update{% else %}Create{% endif %} Data</h1>
+  <h1>Delete Data</h1>
+  <p>Are you sure you want to delete "{{ object.name }}"?</p>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
+    <button type="submit" class="btn btn-danger">Yes, delete it</button>
+    <a href="{% url 'data_list' %}">No, cancel</a>
   </form>
 {% endblock %}
