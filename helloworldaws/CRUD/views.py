@@ -2,7 +2,7 @@
 # list view to display all instances.
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
-from .models import Data
+from .models import Data, LogMessage
 from .forms import DataForm
 from django.shortcuts import redirect, render
 
@@ -23,9 +23,6 @@ class DataCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('data_list')
 
-
-        
-
 class DataUpdateView(UpdateView):
     model = Data
     form_class = DataForm
@@ -36,3 +33,13 @@ class DataDeleteView(DeleteView):
     success_url = reverse_lazy('data_list')
     template_name = 'data_confirm_delete.html'
 
+
+class LogView(ListView):
+    model = LogMessage
+    template_name = 'log.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['log_list'] = LogMessage.objects.order_by('-created_at')
+        return context
+    

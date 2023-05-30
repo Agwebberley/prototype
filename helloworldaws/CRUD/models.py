@@ -19,3 +19,7 @@ class Data(models.Model):
     
     def get_absolute_url(self):
         return reverse('data_list')
+
+class LogMessage(models.Model):
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
