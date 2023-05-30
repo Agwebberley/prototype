@@ -1,59 +1,41 @@
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta name="viewport" content="width=device-width, minimum-scale=1.0 minimal-ui"/>
-        <meta name="description" content=""/>
-        <meta name="author" content=""/>
-
-
-        <title>{{ APPTITLE }}</title>
-
-        <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.js"></script>
-        <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-        {% block head %}{% endblock %}
-    </head>
-    <body>
-        <div class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/">{{ APPTITLE }}</a>
-                    <button class="navbar-toggle" data-target="#navbar-main" data-toggle="collapse" type="button">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-                <div id="navbar-main" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="">Nav Left</a></li>
-                    </ul>
-                    
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="">Nav Right</a></li>
-                    </ul>
-                </div>
+<!DOCTYPE html>
+<html lang="en"> 
+    <head> 
+        <meta charset="UTF-8"> 
+        <title>{% block title %}{{ APPNAME }}{% endblock %}</title>         
+        <script>/* Pinegrow Interactions, do not remove */ (function(){try{if(!document.documentElement.hasAttribute('data-pg-ia-disabled')) { window.pgia_small_mq=typeof pgia_small_mq=='string'?pgia_small_mq:'(max-width:767px)';window.pgia_large_mq=typeof pgia_large_mq=='string'?pgia_large_mq:'(min-width:768px)';var style = document.createElement('style');var pgcss='html:not(.pg-ia-no-preview) [data-pg-ia-hide=""] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show=""] {opacity:1;visibility:visible;display:block;}';if(document.documentElement.hasAttribute('data-pg-id') && document.documentElement.hasAttribute('data-pg-mobile')) {pgia_small_mq='(min-width:0)';pgia_large_mq='(min-width:99999px)'} pgcss+='@media ' + pgia_small_mq + '{ html:not(.pg-ia-no-preview) [data-pg-ia-hide="mobile"] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show="mobile"] {opacity:1;visibility:visible;display:block;}}';pgcss+='@media ' + pgia_large_mq + '{html:not(.pg-ia-no-preview) [data-pg-ia-hide="desktop"] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show="desktop"] {opacity:1;visibility:visible;display:block;}}';style.innerHTML=pgcss;document.querySelector('head').appendChild(style);}}catch(e){console&&console.log(e);}})()</script>         
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet"/>
+        <script src="https://cdn.tailwindcss.com/"></script>
+    </head>     
+    <body class="bg-white dark:bg-gray-900"> 
+        <header class="container mx-auto"> 
+            <nav class="flex items-center flex-wrap px-4 py-5 bg-white dark:bg-gray-900"> <a href="#" class="text-blue-600 dark:text-blue-300 text-xl font-medium uppercase hover:text-blue-800 mr-auto">Prototype</a> 
+                <button class="hover:bg-blue-600 hover:text-white px-3 py-2 rounded text-blue-600 dark:text-blue-300 lg:hidden" data-name="nav-toggler" data-pg-ia='{"l":[{"name":"NabMenuToggler","trg":"click","a":{"l":[{"t":"^nav|[data-name=nav-menu]","l":[{"t":"set","p":0,"d":0,"l":{"class.remove":"hidden"}}]},{"t":"#gt# span:nth-of-type(1)","l":[{"t":"tween","p":0,"d":0.2,"l":{"rotationZ":45,"yPercent":300}}]},{"t":"#gt# span:nth-of-type(2)","l":[{"t":"tween","p":0,"d":0.2,"l":{"autoAlpha":0}}]},{"t":"#gt# span:nth-of-type(3)","l":[{"t":"tween","p":0,"d":0.2,"l":{"rotationZ":-45,"yPercent":-300}}]}]},"pdef":"true","trev":"true"}]}' data-pg-ia-apply="$nav [data-name=nav-toggler]"> <span class="block border-b-2 border-current my-1 w-6"></span> <span class="block border-b-2 border-current my-1 w-6"></span> <span class="block border-b-2 border-current my-1 w-6"></span> 
+                </button>                 
+                <div class="lg:flex lg:space-x-4 lg:space-y-0 lg:w-auto space-y-2 w-full hidden lg:items-center" data-name="nav-menu"></div>                 
+            </nav>             
+        </header>         
+        <div class="flex flex-row h-screen"> 
+            <div class="bg-white dark:bg-gray-900 mx-auto w-1/5"> 
+                <nav class="mt-20 p-4"> 
+                    <ul class="list-none text-black dark:text-white text-center"> 
+                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative">
+                            <a href="{% url 'index' %}" class="text-blue-500 dark:text-blue-300">Home</a> 
+                        </li>                         
+                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative">
+                            <a href="{% url 'data_list' %}" class="text-blue-500 dark:text-blue-300">Customers</a> 
+                        </li>                         
+                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative">
+                            <a href="{% url 'log' %}" class="text-blue-500 dark:text-blue-300">Log</a> 
+                        </li>                         
+                    </ul>                     
+                </nav>                 
             </div>
+            <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white"> 
+                {% block content %} {% endblock %}                 
+                <div class="absolute bg-black dark:bg-gray-900 h-10 right-0 top-0"></div>                 
+            </div>             
         </div>
-
-        <div class="container">
-            <div id="banner" class="page-header">
-                <h1>{% block title %}{{ APPTITLE }}{% endblock %}</h1>
-            </div>
-            {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-			<div class="alert alert-dismissable {{ message.tags }}">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            {{ message }}
-			</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            {% block content %}{% endblock %}
-        </div>
-    </body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
+    </body>     
 </html>

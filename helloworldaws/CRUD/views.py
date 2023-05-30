@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 
 class DataListView(ListView):
     model = Data
-    template_name = 'data_list.html'
+    template_name = 'customers.html'
 
 class DataCreateView(CreateView):
     model = Data
@@ -42,4 +42,8 @@ class LogView(ListView):
         context = super().get_context_data(**kwargs)
         context['log_list'] = LogMessage.objects.order_by('-created_at')
         return context
-    
+
+# index.html
+class IndexView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'index.html')

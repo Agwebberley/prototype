@@ -1,0 +1,7 @@
+<project>
+    <documents></documents>
+    <classstyles>
+        <classstyle name="text" key="text" class="dark:text-white text-black" expanded></classstyle>
+        <deleted key="text.inline"></deleted>
+    </classstyles>
+</project>
