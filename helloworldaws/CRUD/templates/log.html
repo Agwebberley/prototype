@@ -17,10 +17,12 @@
             </tr>
         </thead>
         <tbody>
+            {% for log in object_list %}
             <tr>
-                <td class="dark:text-white text-black border px-4 py-2" data-pg-class-style-inline="border px-4 py-2" data-pg-class-style="text"></td>
-                <td class="dark:text-white text-black border px-4 py-2" data-pg-class-style-inline="border px-4 py-2" data-pg-class-style="text"></td>
+                <td class="dark:text-white text-black border px-4 py-2" data-pg-class-style-inline="border px-4 py-2" data-pg-class-style="text">{{ log.created_at }}</td>
+                <td class="dark:text-white text-black border px-4 py-2" data-pg-class-style-inline="border px-4 py-2" data-pg-class-style="text">{{ log.message }}</td>
             </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
