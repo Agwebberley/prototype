@@ -2,6 +2,8 @@ import boto3
 import signal
 import sys
 
+# This is a Python class that listens to an Amazon Simple Queue Service (SQS) queue and handles
+# messages received.
 class SQSListener:
     def __init__(self, queue_url):
         self.sqs = boto3.client('sqs')
@@ -41,6 +43,8 @@ if __name__ == '__main__':
     listener.start()
 
 
+# This class creates a LogMessage object in Django's models based on a message received from an
+# SQSListener.
 class LogListener(SQSListener):
     def handle_message(self, message):
         from .models import LogMessage

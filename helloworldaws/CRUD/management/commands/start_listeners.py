@@ -1,3 +1,5 @@
+# This is a Django management command that starts an SQS listener for a specific URL and logs customer
+# data.
 from django.core.management.base import BaseCommand
 from CRUD.listener import SQSListener, LogListener
 
