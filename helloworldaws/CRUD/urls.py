@@ -7,8 +7,8 @@ from .views import DataListView, DataCreateView, DataUpdateView, DataDeleteView,
 urlpatterns = [
     path('customers/', DataListView.as_view(), name='data_list'),
     path('create/', DataCreateView.as_view(), name='data_create'),
-    path('<int:pk>/update/', DataUpdateView.as_view(), name='data_update'),
-    path('<int:pk>/delete/', DataDeleteView.as_view(), name='data_delete'),
+    path('customers/<int:pk>/update/', DataUpdateView.as_view(), name='data_update'),
+    path('customers/<int:pk>/delete/', DataDeleteView.as_view(), name='data_delete'),
     path('log/', LogView.as_view(), name='log'),
     path('', IndexView.as_view(), name='index'),
 ]

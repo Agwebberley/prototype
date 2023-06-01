@@ -36,6 +36,7 @@ class SQSListener:
 
     def handle_signal(self, signum, frame):
         self.should_quit = True
+        print('Exiting...')
 
 if __name__ == '__main__':
     queue_url = 'https://sqs.us-east-1.amazonaws.com/123456789012/my-queue'

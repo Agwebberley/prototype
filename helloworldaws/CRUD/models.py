@@ -5,7 +5,6 @@ from django.urls import reverse
 
 
 class Data(models.Model):
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     billing_address = models.CharField(max_length=200)
     shipping_address = models.CharField(max_length=200)
