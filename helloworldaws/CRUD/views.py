@@ -1,13 +1,11 @@
 # This is a set of Django views for creating, updating, and deleting instances of a Data model, with a
 # list view to display all instances.
-from django.forms.models import BaseModelForm
-from django.http import HttpResponse, JsonResponse
-from django.urls import reverse, reverse_lazy
+from django.http import JsonResponse
+from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
 from .models import Data, LogMessage
 from .forms import DataForm
-from django.shortcuts import redirect, render
-from .tasks import get_log_messages
+from django.shortcuts import render
 
 class DataListView(ListView):
     model = Data
