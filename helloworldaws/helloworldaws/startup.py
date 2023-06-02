@@ -1,15 +1,16 @@
-from CRUD.listener import SQSListener, LogListener
 import threading
 
-def thread_listeners():
-    print('Starting SQS listeners...')
-    LogListenerUrl = 'https://sqs.us-west-2.amazonaws.com/710141730058/CustomerLog'
-    
-    LogListenerTask = LogListener(LogListenerUrl)
+class URLListener:
+    def __init__(self, url, class_name):
+        self.url = url
+        self.class_name = class_name
 
-    LogListenerTask.start()
+    def start(self):
+        # Import the class dynamically
+        module = __import__('CRUD.listener', fromlist=[self.class_name])
+        class_ = getattr(module, self.class_name)
 
-
-t = threading.Thread(target=thread_listeners)
-t.daemon = True
-t.start()
+        # Create an instance of the class and start the listener
+        listener = class_(self.url)
+        thread = threading.Thread(target=listener.start)
+        thread.start()
