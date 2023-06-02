@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-10&lvv7o7k94!!o12g0fko)rz=7sml0io9!a=9)eb17$m(z%v=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['helloworld-env.eba-dasmkpze.us-west-2.elasticbeanstalk.com', 'localhost']
+ALLOWED_HOSTS = ["localhost", "prototype-env.eba-mjqvrrew.us-west-2.elasticbeanstalk.com", "172.31.0.155"]
 
 # Application definition
 
@@ -135,3 +135,6 @@ STATIC_ROOT = 'static'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Startup script runs to create seperate threads
+import helloworldaws.startup

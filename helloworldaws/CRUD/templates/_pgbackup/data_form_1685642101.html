@@ -1,4 +1,4 @@
-<script src="nunjucks.js"></script>
+
 {% extends "base.html" %}
 {% block content %}
 <h1>{% if form.instance.pk %}Update{% else %}Create{% endif %} Data</h1> 
@@ -32,5 +32,6 @@
         Submit
 </button>     
 </form>
+<script src="nunjucks.min.js"></script>
 {% endblock %}
 
