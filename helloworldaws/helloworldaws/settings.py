@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ["localhost", "prototype-env.eba-mjqvrrew.us-west-2.elasticbeans
 # Application definition
 
 INSTALLED_APPS = [
-    'CRUD',
+    'Customers',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
