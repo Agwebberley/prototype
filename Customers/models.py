@@ -11,7 +11,7 @@ class Data(models.Model):
     phone = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
     class Meta:
-        app_label = 'CRUD'
+        app_label = 'Customers'
     
     def __str__(self):
         return self.name

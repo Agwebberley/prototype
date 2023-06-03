@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white"> 
     <h1>Delete Data</h1> 
     <p>Are you sure you want to delete &quot;{{ object.name }}&quot;?</p> 
@@ -12,4 +14,4 @@
     </form>
 </div>
 <script src="templating.js"></script>             
-                
+{% endblock %}

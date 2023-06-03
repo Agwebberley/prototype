@@ -1,9 +1,9 @@
 from django.apps import AppConfig
 
 
-class CrudConfig(AppConfig):
+class CustomersConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'CRUD'
+    name = 'Customers'
 
     def ready(self):
-        import CRUD.signals
+        import Customers.signals
