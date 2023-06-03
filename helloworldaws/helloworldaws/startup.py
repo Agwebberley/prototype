@@ -1,5 +1,6 @@
 import threading
 
+# The URLListener class dynamically imports a specified class and starts a listener thread for it.
 class URLListener:
     def __init__(self, url, class_name):
         self.url = url
