@@ -3,7 +3,6 @@
     "containerDefinitions": [
         {
             "name": "prototype",
-            "image": "710141730058.dkr.ecr.us-west-2.amazonaws.com/prototype",
             "cpu": 0,
             "portMappings": [
                 {
