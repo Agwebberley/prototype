@@ -30,8 +30,6 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        with:
-          registries: "710141730058"
 
       - name: Build, tag, and push docker image to Amazon ECR
         env:
@@ -40,4 +38,5 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push 710141730058.dkr.ecr.us-west-2.amazonaws.com:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
