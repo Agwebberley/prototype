@@ -39,4 +39,11 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
+        
+      - name: Update ECS service
+        uses: aws-actions/amazon-ecs-deploy@v1
+        with:
+          cluster: PrototypeCluster
+          service: Django
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} # Use the unique tag for this deployment
+          wait-for-service-stability: true
