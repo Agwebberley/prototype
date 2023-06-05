@@ -135,16 +135,3 @@ STATIC_ROOT = 'static'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Startup script runs to create seperate threads
-from prototype.startup import URLListener
-import threading
-
-# Dictonary of URLS and their corresponding listener classes
-URLS = {"https://sqs.us-west-2.amazonaws.com/710141730058/CustomerLog": "LogListener"}
-
-# Start all listeners
-for url, class_name in URLS.items(): 
-    listener = URLListener(url, class_name)
-    t = threading.Thread(target=listener.start)
-    listener.start()
