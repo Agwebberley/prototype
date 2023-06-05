@@ -32,6 +32,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag, and push docker image to Amazon ECR
+        id: build-image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: prototype
@@ -40,10 +41,18 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         
-      - name: Update ECS service
-        uses: aws-actions/amazon-ecs-deploy@v1
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          cluster: PrototypeCluster
+          task-definition: task-definition.json
+          container-name: prototype
+          image: ${{ steps.build-image.outputs.image }}
+  
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: Django
-          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} # Use the unique tag for this deployment
+          cluster: PrototypeCluster
           wait-for-service-stability: true
