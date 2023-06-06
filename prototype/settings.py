@@ -94,19 +94,28 @@ else:
     }
 """
 
-from prototype.db import get_secret
-DB_SECRET = get_secret()
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DB_SECRET['dbInstanceIdentifier'],
-        'USER': DB_SECRET['username'],
-        'Password': DB_SECRET['password'],
-        'HOST': DB_SECRET['host'],
-        'PORT': DB_SECRET['port'],
-    }
-}
+#if os.environ.get('ENV') == 'DB':
 
+# Check if the DB environment variable exists
+if 'DB' in os.environ:
+    DB_SECRET = eval(os.environ.get('DB'))
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': DB_SECRET['dbInstanceIdentifier'],
+            'USER': DB_SECRET['username'],
+            'Password': DB_SECRET['password'],
+            'HOST': DB_SECRET['host'],
+            'PORT': DB_SECRET['port'],
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

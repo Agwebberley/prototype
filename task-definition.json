@@ -7,7 +7,7 @@
             "portMappings": [
                 {
                     "containerPort": 8000,
-                    "hostPort": 8000,
+                    "hostPort": 80,
                     "protocol": "tcp",
                     "name": "prototype-8000-tcp",
                     "appProtocol": "http"
@@ -84,20 +84,8 @@
     "registeredBy": "arn:aws:iam::710141730058:root",
     "secrets": [
         {
-          "name": "RDS_DB_NAME",
+          "name": "DB",
           "valueFrom": "arn:aws:secretsmanager:us-west-2:710141730058:secret:postgre-p9rQoO"
-        },
-        {
-          "name": "RDS_USERNAME",
-          "valueFrom": "arn:aws:secretsmanager:us-west-2:123456789012:secret:my-rds-secret-abc123"
-        },
-        {
-          "name": "RDS_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:us-west-2:123456789012:secret:my-rds-secret-abc123"
-        },
-        {
-          "name": "RDS_HOSTNAME",
-          "valueFrom": "arn:aws:secretsmanager:us-west-2:123456789012:secret:my-rds-secret-abc123"
         }
       ]
 }
