@@ -27,7 +27,13 @@
                     "awslogs-region": "us-west-2",
                     "awslogs-stream-prefix": "ecs"
                 }
-            }
+            },
+            "secrets": [
+                {
+                  "name": "DB",
+                  "valueFrom": "arn:aws:secretsmanager:us-west-2:710141730058:secret:postgre-p9rQoO"
+                }
+              ]
         }
     ],
     "family": "prototype_task_family",
@@ -81,11 +87,5 @@
     "cpu": "1024",
     "memory": "2048",
     "registeredAt": "2023-06-05T14:47:07.315000-07:00",
-    "registeredBy": "arn:aws:iam::710141730058:root",
-    "secrets": [
-        {
-          "name": "DB",
-          "valueFrom": "arn:aws:secretsmanager:us-west-2:710141730058:secret:postgre-p9rQoO"
-        }
-      ]
+    "registeredBy": "arn:aws:iam::710141730058:root"
 }
