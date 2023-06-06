@@ -104,7 +104,7 @@ if 'DB' in os.environ:
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': DB_SECRET['dbInstanceIdentifier'],
             'USER': DB_SECRET['username'],
-            'Password': DB_SECRET['password'],
+            'PASSWORD': DB_SECRET['password'],
             'HOST': DB_SECRET['host'],
             'PORT': DB_SECRET['port'],
         }
