@@ -1,0 +1,24 @@
+<script src="nunjucks.js"></script> 
+{% extends 'base.html' %}
+{% block content %}
+<h1>Delete Data</h1> 
+<p>Are you sure you want to delete &quot;{{ object.name }}&quot;?</p> 
+<form method="post"> 
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, delete it</button>     <a href="{% url 'data_list' %}">No, cancel</a> 
+</form> 
+{% endblock %}
+<p></p> 
+<script>
+    // Get the current HTML file
+    var currentFile = "http://127.0.0.1:40000/data_confirm_delete.html";
+  
+    // Render the template
+    nunjucks.render(currentFile, function(err, res) {
+      if (err) {
+        console.error(err);
+      } else {
+        document.write(res);
+      }
+    });
+  </script>

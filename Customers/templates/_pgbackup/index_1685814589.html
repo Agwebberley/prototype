@@ -1,0 +1,23 @@
+<div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white">
+    <div class="p-4"> 
+        <h1 class="dark:text-white font-bold mb-4 text-3xl text-black">Welcome to our website</h1> 
+        <p class="dark:text-white mb-4 text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, diam at volutpat ultricies, nulla ipsum imperdiet massa, nec ullamcorper nibh est id enim. Sed non risus.</p> <a href="#" class="bg-blue-500 dark:text-white font-bold hover:bg-blue-700 px-4 py-2 rounded text-white">Learn More</a> 
+    </div>
+</div>
+<script>
+    fetch('base.html')
+    .then(response => response.text())
+    .then(data => {
+        // Split the code at the {% block content %} tag
+        const parts = data.split('{% block content %} {% endblock %}');
+        
+        // Split the head and body code
+        const head = parts[0].split('<body class="bg-white dark:bg-gray-900"> ')[0];
+        const body = parts[0].split('<body class="bg-white dark:bg-gray-900"> ')[1];
+        
+            console.log(head);
+        // Insert the head and tail code into the index.html file
+        document.head.insertAdjacentHTML('afterbegin', head);
+        document.body.innerHTML = body + document.body.innerHTML + parts[1];
+    });
+</script>
