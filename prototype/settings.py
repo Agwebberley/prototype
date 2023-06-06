@@ -71,7 +71,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'prototype.wsgi.application'
 
 
-
+"""
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 if 'RDS_HOSTNAME' in os.environ:
@@ -92,7 +92,20 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+"""
 
+from prototype.db import get_secret
+DB_SECRET = get_secret()
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': DB_SECRET['dbInstanceIdentifier'],
+        'USER': DB_SECRET['username'],
+        'Password': DB_SECRET['password'],
+        'HOST': DB_SECRET['host'],
+        'PORT': DB_SECRET['port'],
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

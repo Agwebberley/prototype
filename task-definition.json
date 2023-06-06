@@ -81,5 +81,23 @@
     "cpu": "1024",
     "memory": "2048",
     "registeredAt": "2023-06-05T14:47:07.315000-07:00",
-    "registeredBy": "arn:aws:iam::710141730058:root"
+    "registeredBy": "arn:aws:iam::710141730058:root",
+    "secrets": [
+        {
+          "name": "RDS_DB_NAME",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:710141730058:secret:postgre-p9rQoO"
+        },
+        {
+          "name": "RDS_USERNAME",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:123456789012:secret:my-rds-secret-abc123"
+        },
+        {
+          "name": "RDS_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:123456789012:secret:my-rds-secret-abc123"
+        },
+        {
+          "name": "RDS_HOSTNAME",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:123456789012:secret:my-rds-secret-abc123"
+        }
+      ]
 }
