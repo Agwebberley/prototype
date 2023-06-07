@@ -1,24 +1,60 @@
-name: AWS SSM
+name: Build and Publish Docker Image to ECR
+permissions:
+  id-token: write # required to use OIDC authentication
+  contents: write # required to checkout the code from the repo
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-west-2
+  ECR_REPOSITORY: prototype
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  start:
+  build-and-publish:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: AWS SSM Send-Command
-        uses: peterkimzz/aws-ssm-send-command@master
-        id: ssm
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-region: us-west-2
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          instance-ids: ${{ secrets.INSTANCE_ID }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::710141730058:role/GithubActionsECR
+          
 
-          working-directory: /home/ec2-user/prototype
-          command: bash deploy.sh
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        id: build-image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: prototype
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+        
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: prototype
+          image: ${{ steps.build-image.outputs.image }}
+  
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: Django
+          cluster: PrototypeCluster
+          wait-for-service-stability: true
