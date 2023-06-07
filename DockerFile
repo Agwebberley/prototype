@@ -13,5 +13,6 @@ RUN pip install --trusted-host pypi.python.org -r requirements.txt
 # Expose port 8000 for Gunicorn
 EXPOSE 8000
 
+
 # Run deploy.sh script & Start Gunicorn
 CMD ["sh", "deploy.sh"]
