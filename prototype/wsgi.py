@@ -1,5 +1,5 @@
 """
-WSGI config for helloworldaws project.
+WSGI config for prototype project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
