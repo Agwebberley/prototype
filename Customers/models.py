@@ -29,6 +29,7 @@ class Items(models.Model):
     price = models.FloatField()
     target_inv = models.IntegerField()
     current_inv = models.IntegerField()
+    reorder_level = models.IntegerField()
     class Meta:
         app_label = 'Customers'
     
