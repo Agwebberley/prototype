@@ -22,16 +22,18 @@
                     <ul class="list-none text-black dark:text-white text-center"> 
                         <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative"> <a href="{% url 'index' %}" class="text-blue-500 dark:text-blue-300">Home</a> 
                         </li>                         
-                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative"> <a href="{% url 'data_list' %}" class="text-blue-500 dark:text-blue-300">Customers</a> 
+                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative"> <a href="{% url 'customer_list' %}" class="text-blue-500 dark:text-blue-300">Customers</a> 
+                        </li>
+                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative"> <a href="{% url 'customer_list' %}" class="text-blue-500 dark:text-blue-300">Items</a> 
+                        </li>
+                        <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative"> <a href="{% url 'customer_list' %}" class="text-blue-500 dark:text-blue-300">Orders</a> 
                         </li>                         
                         <li class="mb-4 transition duration-500 ease-in-out transform hover:translate-x-1 hover:text-blue-700 relative"> <a href="{% url 'log' %}" class="text-blue-500 dark:text-blue-300">Log</a> 
                         </li>                         
                     </ul>                     
                 </nav>                 
             </div>             
-             
-                {% block content %} {% endblock %}                 
-            
+            {% block content %} {% endblock %}                 
         </div>         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>         
     </body>     
