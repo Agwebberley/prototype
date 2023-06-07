@@ -3,8 +3,8 @@
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
-from .models import Customers, LogMessage
-from .forms import CustomerForm
+from .models import Customers, LogMessage, Items, Orders
+from .forms import CustomerForm, ItemForm, OrderForm
 from django.shortcuts import render
 
 class CustomerListView(ListView):
