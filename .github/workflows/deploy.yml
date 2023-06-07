@@ -1,0 +1,23 @@
+name: AWS SSM Send-Command Example
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  start:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: AWS SSM Send-Command
+        uses: peterkimzz/aws-ssm-send-command@master
+        id: ssm
+        with:
+          aws-region: us-west-2
+          aws-assume-role: ${{ secrets.AWS_ASSUME_ROLE }}
+          instance-ids: ${{ secrets.INSTANCE_ID }}
+
+          working-directory: /home/ec2-user/prototype
+          command: bash deploy.sh
