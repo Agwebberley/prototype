@@ -13,6 +13,13 @@ RUN pip install --trusted-host pypi.python.org -r requirements.txt
 # Expose port 8000 for Gunicorn
 EXPOSE 8000
 
+ARG RDS_USERNAME
+ARG RDS_PASSWORD
+ARG RDS_HOSTNAME
+
+ENV RDS_USERNAME=$RDS_USERNAME
+ENV RDS_PASSWORD=$RDS_PASSWORD
+ENV RDS_HOSTNAME=$RDS_HOSTNAME
 
 # Run deploy.sh script & Start Gunicorn
 CMD ["sh", "deploy.sh"]
