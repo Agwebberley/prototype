@@ -21,6 +21,6 @@ ENV RDS_USERNAME=$RDS_USERNAME
 ENV RDS_PASSWORD=$RDS_PASSWORD
 ENV RDS_HOSTNAME=$RDS_HOSTNAME
 
-RUN chmod +x ./deploy.sh
+RUN chmod +x deploy.sh
 
-CMD ["sh", "./deploy.sh"]
+CMD ["sh", "deploy.sh"]
