@@ -5,7 +5,7 @@ FROM python:3.11-slim-buster
 WORKDIR /prototype
 
 # Copy the current directory contents into the container at /app
-COPY . /prototype
+COPY . .
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
