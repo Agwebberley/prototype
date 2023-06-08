@@ -23,4 +23,4 @@ ENV RDS_HOSTNAME=$RDS_HOSTNAME
 
 RUN chmod +x deploy.sh
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "prototype.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "prototype.wsgi:application"]
