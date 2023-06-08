@@ -22,4 +22,4 @@ ENV RDS_PASSWORD=$RDS_PASSWORD
 ENV RDS_HOSTNAME=$RDS_HOSTNAME
 
 # Run deploy.sh script & Start Gunicorn
-CMD ["sh", "deploy.sh"]
+CMD ["./deploy.sh"]
