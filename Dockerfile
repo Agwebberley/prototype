@@ -23,4 +23,4 @@ ENV RDS_HOSTNAME=$RDS_HOSTNAME
 
 # after building the image, run the container with the following command:
 # python3 manage.py makemigrations && python3 manage.py migrate && gunicorn prototype.wsgi:application --bind
-CMD ["python3", "manage.py", "makemigrations", "&&", "python3", "manage.py", "migrate", "&&", "python3", "./Customers/listener.py" "&" "gunicorn", "prototype.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["python3", "manage.py", "makemigrations", "&&", "python3", "manage.py", "migrate", "&&", "gunicorn", "prototype.wsgi:application", "--bind", "0.0.0.0:8000"]
