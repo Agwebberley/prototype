@@ -5,7 +5,7 @@ import threading
 # This is a Python class that listens to an Amazon Simple Queue Service (SQS) queue and handles
 # messages received.
 
-class SQSListener:
+class SQSListener(threading.Thread):
     def __init__(self, queue_url):
         self.queue_url = queue_url
         self.should_quit = False
@@ -43,21 +43,9 @@ class SQSListener:
 # SQSListener.
 class LogListener(SQSListener):
     def handle_message(self, message):
-        from .models import LogMessage
+        from Customers.models import LogMessage
 
         # message['Body'] is a JSON string, parse it to a dictionary
         message_dict = json.loads(message['Body'])
         logging.info(f"Received message: {message_dict}")
         LogMessage.objects.create(message=message_dict['Message'])
-
-
-if __name__ == "__main__":
-    
-    from django.conf import settings
-
-    logging.basicConfig(level=logging.INFO)
-    LogL = LogListener("https://sqs.us-west-2.amazonaws.com/710141730058/CustomerLog")
-    
-    LogLT = threading.Thread(target=LogL.start)
-    LogLT.start()
-

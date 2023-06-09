@@ -14,38 +14,16 @@ class SNSPublisher:
         self.sns.publish(TopicArn=self.topic_arn, Message=message)
 
 
-@receiver(post_save, sender=Customers)
-@receiver(post_delete, sender=Customers)
-def Customer(sender, instance, **kwargs):
-    publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:CustomerLog')
-    if kwargs.get('created'):
-        message = f"Customer {instance.id} was created"
-    elif kwargs.get('update_fields'):
-        message = f"Customer {instance.id} was updated" 
-    else: 
-        message = f"Customer {instance.id} was deleted"
-    publisher.publish(message)
-
-@receiver(post_save, sender=Items)
-@receiver(post_delete, sender=Items)
-def Item(sender, instance, **kwargs):
-    publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:CustomerLog')
-    if kwargs.get('created'):
-        message = f"Item {instance.id} was created"
-    elif kwargs.get('update_fields'):
-        message = f"Item {instance.id} was updated" 
-    else: 
-        message = f"Item {instance.id} was deleted"
-    publisher.publish(message)
-
-@receiver(post_save, sender=Orders)
-@receiver(post_delete, sender=Orders)
-def Order(sender, instance, **kwargs):
-    publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:CustomerLog')
-    if kwargs.get('created'):
-        message = f"Order {instance.id} was created"
-    elif kwargs.get('update_fields'):
-        message = f"Order {instance.id} was updated" 
-    else: 
-        message = f"Order {instance.id} was deleted"
-    publisher.publish(message)
+@receiver(post_save)
+@receiver(post_delete)
+def post_signal(sender, instance, **kwargs):
+    if sender.__name__ != 'LogMessage':
+        publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:CustomerLog')
+        print(f"post {instance.id}")
+        if kwargs.get('created'):
+            message = f"{sender.__name__} with ID {instance.id} was created"
+        elif kwargs.get('update_fields'):
+            message = f"{sender.__name__} with ID {instance.id} was updated" 
+        else: 
+            message = f"{sender.__name__} with ID {instance.id} was deleted"
+        publisher.publish(message)
