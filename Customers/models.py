@@ -19,19 +19,6 @@ class Customers(models.Model):
     def get_absolute_url(self):
         return reverse('data_list')
 
-class Orders(models.Model):
-    customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
-    item = models.ForeignKey(Items, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    class Meta:
-        app_label = 'Customers'
-    
-    def __str__(self):
-        return self.customer
-    
-    def get_absolute_url(self):
-        return reverse('order_list')
-
 class AccountsReceivable(models.Model):
     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
     amount = models.FloatField()

@@ -33,32 +33,6 @@ class CustomerDeleteView(DeleteView):
     success_url = reverse_lazy('customer_list')
     template_name = 'customer_confirm_delete.html'
 
-# Orders
-class OrderListView(ListView):
-    model = Orders
-    template_name = 'orders.html'
-
-class OrderCreateView(CreateView):
-    model = Orders
-    form_class = OrderForm
-    template_name = 'order_form.html'
-
-    def form_invalid(self, form):
-        return JsonResponse(form.errors, status=400)
-
-    def get_success_url(self):
-        return reverse_lazy('order_list')
-
-class OrderUpdateView(UpdateView):
-    model = Orders
-    form_class = OrderForm
-    template_name = 'order_form.html'
-
-class OrderDeleteView(DeleteView):
-    model = Orders
-    success_url = reverse_lazy('order_list')
-    template_name = 'order_confirm_delete.html'
-
 # Accounts Receivable
 class AccountsReceivableListView(ListView):
     model = AccountsReceivable
