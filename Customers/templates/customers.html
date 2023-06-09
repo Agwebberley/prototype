@@ -1,10 +1,10 @@
-{% extends 'Shared/base.html' %}
+{% extends 'base.html' %}
 {% block content %}
 
 <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white"> 
     <div class="p-4">
         <h1 class="dark:text-white text-black font-bold mb-4 text-3xl" data-pg-class-style-inline="font-bold mb-4 text-3xl" data-pg-class-style="text">Customer Database Table</h1>
-        <button type="button" class="flowbite text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"><a href="{% url 'customer_create' %}">Add New Customer</a></button>
+        <button type="button" class="flowbite text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"><a href="{% url 'customers:customer_create' %}">Add New Customer</a></button>
         <h1 class="dark:text-white font-bold mb-4 text-3xl text-black"></h1>
         <table class="table-auto">
             <thead>
@@ -38,10 +38,10 @@
                             <div id="dropdown{{ customer.pk }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded shadow w-44 dark:bg-gray-700">
                                 <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault{{ customer.pk }}">
                                     <li>
-                                        <a href="{% url 'customer_update' customer.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                                        <a href="{% url 'customers:customer_update' customer.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
                                     </li>
                                     <li>
-                                        <a href="{% url 'customer_delete' customer.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
+                                        <a href="{% url 'customers:customer_delete' customer.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
                                     </li>
                                     <li>
 

@@ -1,4 +1,4 @@
-{% extends 'Shared/base.html' %}
+{% extends 'base.html' %}
 {% block content %}
 <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white"> 
     <div class="p-4"> 
@@ -37,11 +37,11 @@
                             <!-- Dropdown menu -->                             
                             <div id="dropdown{{ accounts_receivable.pk }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded shadow w-44 dark:bg-gray-700"> 
                                 <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault{{ accounts_receivable.pk }}"> 
-                                    <li> <a href="{% url 'accounts_receivable_update' accounts_receivable.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mark as {% if accounts_receivable.paid %}Not{% endif %} Paid</a> 
+                                    <li> <a href="{% url 'accounts_receivable:accounts_receivable_update' accounts_receivable.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mark as {% if accounts_receivable.paid %}Not{% endif %} Paid</a> 
                                     </li>                                     
-                                    <li> <a href="{% url 'order_update' accounts_receivable.order.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Update Order</a> 
+                                    <li> <a href="{% url 'orders:order_update' accounts_receivable.order.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Update Order</a> 
                                     </li>                                     
-                                    <li> <a href="{% url 'order_delete' accounts_receivable.order.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Order</a> 
+                                    <li> <a href="{% url 'orders:order_delete' accounts_receivable.order.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Order</a> 
                                     </li>                                     
                                     <li> 
 </li>                                     
