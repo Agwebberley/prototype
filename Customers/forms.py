@@ -12,6 +12,8 @@ class ItemForm(forms.ModelForm):
         fields = ('name', 'description', 'price', 'target_inv', 'current_inv', 'reorder_level')
 
 class OrderForm(forms.ModelForm):
+    customer = forms.ModelChoiceField(queryset=Customers.objects.all().order_by('name'))
+    item = forms.ModelChoiceField(queryset=Items.objects.all().order_by('name'))
     class Meta:
         model = Orders
         fields = ('customer', 'item', 'quantity')

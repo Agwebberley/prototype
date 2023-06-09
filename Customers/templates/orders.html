@@ -32,7 +32,7 @@
             <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white">
                 <div class="p-4">
                     <h1 class="dark:text-white text-black font-bold mb-4 text-3xl" data-pg-class-style-inline="font-bold mb-4 text-3xl" data-pg-class-style="text">Orders</h1>
-                    <button type="button" class="flowbite text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"><a href="{% url 'customer_create' %}">Add New Order</a>
+                    <button type="button" class="flowbite text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"><a href="{% url 'order_create' %}">Add New Order</a>
                     </button>
                     <h1 class="dark:text-white font-bold mb-4 text-3xl text-black"></h1>
                     <table class="table-auto">
@@ -48,28 +48,29 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% for order in object_list %}
                             <tr>
-                                <td class="dark:text-white border px-4 py-2"></td>
-                                <td class="dark:text-white border px-4 py-2"></td>
-                                <td class="dark:text-white border px-4 py-2"></td>
-                                <td class="dark:text-white border px-4 py-2"></td>
-                                <td class="dark:text-white border px-4 py-2"></td>
-                                <td class="dark:text-white border px-4 py-2"></td>
+                                <td class="dark:text-white border px-4 py-2">{{ order.id }}</td>
+                                <td class="dark:text-white border px-4 py-2">{{ order.customer.id }}</td>
+                                <td class="dark:text-white border px-4 py-2">{{ order.customer.name }}</td>
+                                <td class="dark:text-white border px-4 py-2">{{ order.item.id }}</td>
+                                <td class="dark:text-white border px-4 py-2">{{ order.item.name }}</td>
+                                <td class="dark:text-white border px-4 py-2">{{ order.quantity }}</td>
                                 <td class="dark:text-white border px-4 py-2">
                                     <div class="flowbite">
-                                        <button id="dropdownDefault{{ customer.pk }}" data-dropdown-toggle="dropdown{{ customer.pk }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Actions
+                                        <button id="dropdownDefault{{ order.pk }}" data-dropdown-toggle="dropdown{{ order.pk }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Actions
                                             <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                             </svg>
                                         </button>
                                         <!-- Dropdown menu -->
-                                        <div id="dropdown{{ customer.pk }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded shadow w-44 dark:bg-gray-700">
-                                            <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault{{ customer.pk }}">
+                                        <div id="dropdown{{ order.pk }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded shadow w-44 dark:bg-gray-700">
+                                            <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault{{ order.pk }}">
                                                 <li>
-                                                    <a href="{% url 'customer_update' customer.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                                                    <a href="{% url 'order_update' order.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
                                                 </li>
                                                 <li>
-                                                    <a href="{% url 'customer_delete' customer.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
+                                                    <a href="{% url 'order_delete' order.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
                                                 </li>
                                                 <li>
 </li>
@@ -80,6 +81,7 @@
                                     </div>                                     
                                 </td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
