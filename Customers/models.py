@@ -2,7 +2,7 @@
 # methods for returning a string representation and an absolute URL.
 from django.db import models
 from django.urls import reverse
-
+import datetime
 
 class Customers(models.Model):
     name = models.CharField(max_length=200)
@@ -26,7 +26,7 @@ class LogMessage(models.Model):
 class Items(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     target_inv = models.IntegerField()
     current_inv = models.IntegerField()
     reorder_level = models.IntegerField()
@@ -53,15 +53,16 @@ class Orders(models.Model):
         return reverse('order_list')
 
 class AccountsReceivable(models.Model):
-    customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
+    order = models.ForeignKey(Orders, on_delete=models.CASCADE)
     amount = models.FloatField()
-    due_date = models.DateField()
+    # Due date defaults to 30 days from now
+    due_date = models.DateField(default=datetime.date.today() + datetime.timedelta(days=30))
     paid = models.BooleanField(default=False)
     class Meta:
         app_label = 'Customers'
     
     def __str__(self):
-        return f"{self.customer} - {self.amount}"
+        return f"{self.order.id} - {self.amount}"
     
     def get_absolute_url(self):
         return reverse('accounts_receivable_list')

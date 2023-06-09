@@ -5,7 +5,7 @@ from django.urls import path
 from .views import CustomerListView, CustomerCreateView, CustomerUpdateView, CustomerDeleteView, LogView, IndexView
 from .views import OrderListView, OrderCreateView, OrderUpdateView, OrderDeleteView
 from .views import ItemListView, ItemCreateView, ItemUpdateView, ItemDeleteView
-from .views import AccountsReceivableListView, AccountsReceivableCreateView, AccountsReceivableUpdateView, AccountsReceivableDeleteView
+from .views import AccountsReceivableListView, AccountsReceivableCreateView, AccountsReceivableUpdateView, AccountsReceivableDeleteView, AccountsReceivablePayView
 from .views import InventoryListView, InventoryCreateView, InventoryUpdateView, InventoryDeleteView
 
 urlpatterns = [
@@ -27,6 +27,7 @@ urlpatterns = [
     path('accounts_receivable/create/', AccountsReceivableCreateView.as_view(), name='accounts_receivable_create'),
     path('accounts_receivable/<int:pk>/update/', AccountsReceivableUpdateView.as_view(), name='accounts_receivable_update'),
     path('accounts_receivable/<int:pk>/delete/', AccountsReceivableDeleteView.as_view(), name='accounts_receivable_delete'),
+    path('accounts_receivable/<int:pk>/pay/', AccountsReceivablePayView.as_view(), name='accounts_receivable_pay'),
     path('inventory/', InventoryListView.as_view(), name='inventory_list'),
     path('inventory/create/', InventoryCreateView.as_view(), name='inventory_create'),
     path('inventory/<int:pk>/update/', InventoryUpdateView.as_view(), name='inventory_update'),

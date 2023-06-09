@@ -21,7 +21,7 @@ class OrderForm(forms.ModelForm):
 class AccountsReceivableForm(forms.ModelForm):
     class Meta:
         model = AccountsReceivable
-        fields = ('customer', 'amount', 'due_date')
+        fields = ('order', 'amount', 'due_date')
 
 class InventoryForm(forms.ModelForm):
     class Meta:
