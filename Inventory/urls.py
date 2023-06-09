@@ -4,6 +4,8 @@
 from django.urls import path
 from .views import InventoryListView, InventoryCreateView, InventoryUpdateView, InventoryDeleteView
 
+app_name = 'inventory'
+
 urlpatterns = [
     path('', InventoryListView.as_view(), name='inventory_list'),
     path('create/', InventoryCreateView.as_view(), name='inventory_create'),

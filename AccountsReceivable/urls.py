@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import AccountsReceivableListView, AccountsReceivableCreateView, AccountsReceivableUpdateView, AccountsReceivableDeleteView, AccountsReceivableTogglePaidView
 
+app_name = 'accounts_receivable'
+
 urlpatterns = [
     path('', AccountsReceivableListView.as_view(), name='accounts_receivable_list'),
     path('create/', AccountsReceivableCreateView.as_view(), name='accounts_receivable_create'),

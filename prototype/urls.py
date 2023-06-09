@@ -18,11 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("", include("Shared.urls")),
+    path("", include("Shared.urls"), name="shared"),
     path('admin/', admin.site.urls),
-    path("customers/", include("Customers.urls")),
-    path("orders/", include("Orders.urls")),
-    path("items/", include("Items.urls")),
-    path("inventory/", include("Inventory.urls")),
-    path("accounts_receivable/", include("AccountsReceivable.urls")),
+    path("customers/", include("Customers.urls"), name="customers"),
+    path("orders/", include("Orders.urls"), name="orders"),
+    path("items/", include("Items.urls"), name="items"),
+    path("inventory/", include("Inventory.urls"), name="inventory"),
+    path("accounts_receivable/", include("AccountsReceivable.urls"), name="accounts_receivable"),
 ]
