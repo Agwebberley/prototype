@@ -3,7 +3,6 @@
 # and `CustomerDeleteView`) from the application's `views.py` file.
 from django.urls import path
 from .views import CustomerListView, CustomerCreateView, CustomerUpdateView, CustomerDeleteView
-from .views import AccountsReceivableListView, AccountsReceivableCreateView, AccountsReceivableUpdateView, AccountsReceivableDeleteView, AccountsReceivableTogglePaidView
 from .views import InventoryListView, InventoryCreateView, InventoryUpdateView, InventoryDeleteView
 
 urlpatterns = [
@@ -11,11 +10,6 @@ urlpatterns = [
     path('create/', CustomerCreateView.as_view(), name='customer_create'),
     path('customers/<int:pk>/update/', CustomerUpdateView.as_view(), name='customer_update'),
     path('customers/<int:pk>/delete/', CustomerDeleteView.as_view(), name='customer_delete'),
-    path('accounts_receivable/', AccountsReceivableListView.as_view(), name='accounts_receivable_list'),
-    path('accounts_receivable/create/', AccountsReceivableCreateView.as_view(), name='accounts_receivable_create'),
-    path('accounts_receivable/<int:pk>/update/', AccountsReceivableUpdateView.as_view(), name='accounts_receivable_update'),
-    path('accounts_receivable/<int:pk>/delete/', AccountsReceivableDeleteView.as_view(), name='accounts_receivable_delete'),
-    path('accounts_receivable/<int:pk>/pay/', AccountsReceivableTogglePaidView.as_view(), name='accounts_receivable_pay'),
     path('inventory/', InventoryListView.as_view(), name='inventory_list'),
     path('inventory/create/', InventoryCreateView.as_view(), name='inventory_create'),
     path('inventory/<int:pk>/update/', InventoryUpdateView.as_view(), name='inventory_update'),

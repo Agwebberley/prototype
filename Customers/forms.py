@@ -1,16 +1,10 @@
 from django import forms
-from .models import Customers, AccountsReceivable, Inventory
+from .models import Customers, Inventory
 
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customers
         fields = ('name', 'billing_address', 'shipping_address', 'phone', 'email')
-
-
-class AccountsReceivableForm(forms.ModelForm):
-    class Meta:
-        model = AccountsReceivable
-        fields = ('order', 'amount', 'due_date')
 
 class InventoryForm(forms.ModelForm):
     class Meta:
