@@ -49,15 +49,3 @@ class LogListener(SQSListener):
         message_dict = json.loads(message['Body'])
         logging.info(f"Received message: {message_dict}")
         LogMessage.objects.create(message=message_dict['Message'])
-
-
-if __name__ == "__main__":
-    
-    from django.conf import settings
-
-    logging.basicConfig(level=logging.INFO)
-    LogL = LogListener("https://sqs.us-west-2.amazonaws.com/710141730058/CustomerLog")
-    
-    LogLT = threading.Thread(target=LogL.start)
-    LogLT.start()
-
