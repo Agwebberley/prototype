@@ -5,4 +5,4 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 sudo systemctl restart nginx
 sudo systemctl restart gunicorn
-python manage.py start_listeners &
+python3 manage.py start_listeners &
