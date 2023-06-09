@@ -51,3 +51,29 @@ class Orders(models.Model):
     
     def get_absolute_url(self):
         return reverse('order_list')
+
+class AccountsReceivable(models.Model):
+    customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
+    amount = models.FloatField()
+    due_date = models.DateField()
+    paid = models.BooleanField(default=False)
+    class Meta:
+        app_label = 'Customers'
+    
+    def __str__(self):
+        return f"{self.customer} - {self.amount}"
+    
+    def get_absolute_url(self):
+        return reverse('accounts_receivable_list')
+
+class Inventory(models.Model):
+    item = models.ForeignKey(Items, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    class Meta:
+        app_label = 'Customers'
+    
+    def __str__(self):
+        return f"{self.item} - {self.quantity}"
+    
+    def get_absolute_url(self):
+        return reverse('inventory_list')

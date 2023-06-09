@@ -1,5 +1,5 @@
 from django import forms
-from .models import Customers, Items, Orders
+from .models import Customers, Items, Orders, AccountsReceivable, Inventory
 
 class CustomerForm(forms.ModelForm):
     class Meta:
@@ -17,3 +17,13 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Orders
         fields = ('customer', 'item', 'quantity')
+
+class AccountsReceivableForm(forms.ModelForm):
+    class Meta:
+        model = AccountsReceivable
+        fields = ('customer', 'amount', 'due_date')
+
+class InventoryForm(forms.ModelForm):
+    class Meta:
+        model = Inventory
+        fields = ('item', 'quantity')
