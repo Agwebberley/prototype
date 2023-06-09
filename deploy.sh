@@ -5,4 +5,4 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 sudo systemctl restart nginx
 sudo systemctl restart gunicorn
-nohup python3 ./Customer/listener.py &
+python manage.py start_listeners &
