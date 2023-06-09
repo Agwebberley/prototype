@@ -2,7 +2,7 @@
 # methods for returning a string representation and an absolute URL.
 from django.db import models
 from django.urls import reverse
-
+import datetime
 
 class Customers(models.Model):
     name = models.CharField(max_length=200)
@@ -26,9 +26,9 @@ class LogMessage(models.Model):
 class Items(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     target_inv = models.IntegerField()
-    current_inv = models.IntegerField()
+    current_inv = models.IntegerField(default=0)
     reorder_level = models.IntegerField()
     class Meta:
         app_label = 'Customers'
@@ -51,3 +51,30 @@ class Orders(models.Model):
     
     def get_absolute_url(self):
         return reverse('order_list')
+
+class AccountsReceivable(models.Model):
+    order = models.ForeignKey(Orders, on_delete=models.CASCADE)
+    amount = models.FloatField()
+    # Due date defaults to 30 days from now
+    due_date = models.DateField(default=datetime.date.today() + datetime.timedelta(days=30))
+    paid = models.BooleanField(default=False)
+    class Meta:
+        app_label = 'Customers'
+    
+    def __str__(self):
+        return f"{self.order.id} - {self.amount}"
+    
+    def get_absolute_url(self):
+        return reverse('accounts_receivable_list')
+
+class Inventory(models.Model):
+    item = models.ForeignKey(Items, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    class Meta:
+        app_label = 'Customers'
+    
+    def __str__(self):
+        return f"{self.item} - {self.quantity}"
+    
+    def get_absolute_url(self):
+        return reverse('inventory_list')
