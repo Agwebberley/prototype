@@ -2,7 +2,7 @@
 # from the `django.urls` module and four views (`CustomerListView`, `CustomerCreateView`, `CustomerUpdateView`,
 # and `CustomerDeleteView`) from the application's `views.py` file.
 from django.urls import path
-from .views import CustomerListView, CustomerCreateView, CustomerUpdateView, CustomerDeleteView, LogView, IndexView
+from .views import CustomerListView, CustomerCreateView, CustomerUpdateView, CustomerDeleteView
 from .views import OrderListView, OrderCreateView, OrderUpdateView, OrderDeleteView
 from .views import AccountsReceivableListView, AccountsReceivableCreateView, AccountsReceivableUpdateView, AccountsReceivableDeleteView, AccountsReceivableTogglePaidView
 from .views import InventoryListView, InventoryCreateView, InventoryUpdateView, InventoryDeleteView
@@ -12,8 +12,6 @@ urlpatterns = [
     path('create/', CustomerCreateView.as_view(), name='customer_create'),
     path('customers/<int:pk>/update/', CustomerUpdateView.as_view(), name='customer_update'),
     path('customers/<int:pk>/delete/', CustomerDeleteView.as_view(), name='customer_delete'),
-    path('log/', LogView.as_view(), name='log'),
-    path('', IndexView.as_view(), name='index'),
     path('orders/', OrderListView.as_view(), name='order_list'),
     path('orders/create/', OrderCreateView.as_view(), name='order_create'),
     path('orders/<int:pk>/update/', OrderUpdateView.as_view(), name='order_update'),

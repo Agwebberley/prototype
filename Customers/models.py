@@ -19,10 +19,6 @@ class Customers(models.Model):
     def get_absolute_url(self):
         return reverse('data_list')
 
-class LogMessage(models.Model):
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
 class Orders(models.Model):
     customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
     item = models.ForeignKey(Items, on_delete=models.CASCADE)

@@ -33,21 +33,6 @@ class CustomerDeleteView(DeleteView):
     success_url = reverse_lazy('customer_list')
     template_name = 'customer_confirm_delete.html'
 
-
-class LogView(ListView):
-    model = LogMessage
-    template_name = 'log.html'
-
-    def get_context_customer(self, **kwargs):
-        context = super().get_context_customer(**kwargs)
-        context['log_list'] = LogMessage.objects.order_by('-created_at')
-        return context
-
-# index.html
-class IndexView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'index.html')
-
 # Orders
 class OrderListView(ListView):
     model = Orders
