@@ -9,7 +9,7 @@ class Orders(models.Model):
     item = models.ForeignKey(Items, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     class Meta:
-        app_label = 'Customers'
+        app_label = 'Orders'
     
     def __str__(self):
         return self.customer

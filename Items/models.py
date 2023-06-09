@@ -10,7 +10,7 @@ class Items(models.Model):
     current_inv = models.IntegerField(default=0)
     reorder_level = models.IntegerField()
     class Meta:
-        app_label = 'Customers'
+        app_label = 'Items'
     
     def __str__(self):
         return self.name
