@@ -33,11 +33,11 @@ def post_signal(sender, instance, **kwargs):
 def order_post(sender, instance, **kwargs):
     publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:Order')
     if kwargs.get('created'):
-        message = f"created {instance.id}"
+        message = f"order created {instance.id}"
     elif kwargs.get('update_fields'):
-        message = f"updated {instance.id}"
+        message = f"order updated {instance.id}"
     else:
-        message = f"deleted {instance.id}"
+        message = f"order deleted {instance.id}"
     publisher.publish(message)
 
 @receiver(post_save, sender=Inventory)
@@ -45,7 +45,7 @@ def order_post(sender, instance, **kwargs):
 def inventory_post(sender, instance, **kwargs):
     publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:Inventory')
     if kwargs.get('update_fields'):
-        message = f"updated {instance.id}"
+        message = f"inventory updated {instance.id}"
     else:
         return
     publisher.publish(message)
