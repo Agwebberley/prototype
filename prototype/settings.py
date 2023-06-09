@@ -34,7 +34,12 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://35.165.164.17"]
 # Application definition
 
 INSTALLED_APPS = [
+    'Shared',
     'Customers',
+    'Orders',
+    'Items',
+    'Inventory',
+    'AccountsReceivable',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
