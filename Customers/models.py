@@ -37,7 +37,7 @@ class Items(models.Model):
         return self.name
     
     def get_absolute_url(self):
-        return reverse('items_list')
+        return reverse('item_list')
 
 class Orders(models.Model):
     customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
@@ -50,4 +50,4 @@ class Orders(models.Model):
         return self.customer
     
     def get_absolute_url(self):
-        return reverse('orders_list')
+        return reverse('order_list')
