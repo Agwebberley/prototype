@@ -1,4 +1,4 @@
-from django.forms import forms
+from django import forms
 from .models import Orders
 from Customers.models import Customers
 from Items.models import Items
