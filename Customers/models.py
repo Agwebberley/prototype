@@ -23,22 +23,6 @@ class LogMessage(models.Model):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-class Items(models.Model):
-    name = models.CharField(max_length=200)
-    description = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    target_inv = models.IntegerField()
-    current_inv = models.IntegerField(default=0)
-    reorder_level = models.IntegerField()
-    class Meta:
-        app_label = 'Customers'
-    
-    def __str__(self):
-        return self.name
-    
-    def get_absolute_url(self):
-        return reverse('item_list')
-
 class Orders(models.Model):
     customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
     item = models.ForeignKey(Items, on_delete=models.CASCADE)

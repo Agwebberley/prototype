@@ -4,7 +4,6 @@
 from django.urls import path
 from .views import CustomerListView, CustomerCreateView, CustomerUpdateView, CustomerDeleteView, LogView, IndexView
 from .views import OrderListView, OrderCreateView, OrderUpdateView, OrderDeleteView
-from .views import ItemListView, ItemCreateView, ItemUpdateView, ItemDeleteView
 from .views import AccountsReceivableListView, AccountsReceivableCreateView, AccountsReceivableUpdateView, AccountsReceivableDeleteView, AccountsReceivableTogglePaidView
 from .views import InventoryListView, InventoryCreateView, InventoryUpdateView, InventoryDeleteView
 
@@ -19,10 +18,6 @@ urlpatterns = [
     path('orders/create/', OrderCreateView.as_view(), name='order_create'),
     path('orders/<int:pk>/update/', OrderUpdateView.as_view(), name='order_update'),
     path('orders/<int:pk>/delete/', OrderDeleteView.as_view(), name='order_delete'),
-    path('items/', ItemListView.as_view(), name='item_list'),
-    path('items/create/', ItemCreateView.as_view(), name='item_create'),
-    path('items/<int:pk>/update/', ItemUpdateView.as_view(), name='item_update'),
-    path('items/<int:pk>/delete/', ItemDeleteView.as_view(), name='item_delete'),
     path('accounts_receivable/', AccountsReceivableListView.as_view(), name='accounts_receivable_list'),
     path('accounts_receivable/create/', AccountsReceivableCreateView.as_view(), name='accounts_receivable_create'),
     path('accounts_receivable/<int:pk>/update/', AccountsReceivableUpdateView.as_view(), name='accounts_receivable_update'),

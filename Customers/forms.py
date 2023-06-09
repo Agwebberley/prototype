@@ -6,10 +6,6 @@ class CustomerForm(forms.ModelForm):
         model = Customers
         fields = ('name', 'billing_address', 'shipping_address', 'phone', 'email')
 
-class ItemForm(forms.ModelForm):
-    class Meta:
-        model = Items
-        fields = ('name', 'description', 'price', 'target_inv', 'current_inv', 'reorder_level')
 
 class OrderForm(forms.ModelForm):
     customer = forms.ModelChoiceField(queryset=Customers.objects.all().order_by('name'))
