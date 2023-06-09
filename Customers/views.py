@@ -126,13 +126,13 @@ class AccountsReceivableDeleteView(DeleteView):
     success_url = reverse_lazy('accounts_receivable_list')
     template_name = 'accounts_receivable_confirm_delete.html'
 
-    class AccountsReceivableTogglePaidView(View):
-        def post(self, request, *args, **kwargs):
-            accounts_receivable_id = kwargs.get('pk')
-            accounts_receivable = get_object_or_404(AccountsReceivable, pk=accounts_receivable_id)
-            accounts_receivable.paid = not accounts_receivable.paid
-            accounts_receivable.save()
-            return reverse_lazy('accounts_receivable_list')
+class AccountsReceivableTogglePaidView(View):
+    def post(self, request, *args, **kwargs):
+        accounts_receivable_id = kwargs.get('pk')
+        accounts_receivable = get_object_or_404(AccountsReceivable, pk=accounts_receivable_id)
+        accounts_receivable.paid = not accounts_receivable.paid
+        accounts_receivable.save()
+        return reverse_lazy('accounts_receivable_list')
 
 # Inventory
 class InventoryListView(ListView):

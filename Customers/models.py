@@ -28,7 +28,7 @@ class Items(models.Model):
     description = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     target_inv = models.IntegerField()
-    current_inv = models.IntegerField()
+    current_inv = models.IntegerField(default=0)
     reorder_level = models.IntegerField()
     class Meta:
         app_label = 'Customers'
