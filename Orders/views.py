@@ -64,7 +64,11 @@ class OrderItemUpdateView(UpdateView):
     template_name = 'order_item_form.html'
 
     def get_success_url(self):
-        return reverse_lazy('orders:order_details', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('orders:order_detail', kwargs={'pk': self.kwargs['pk']})
+    
+    def get_object(self, queryset=None):
+        order_item_id = self.kwargs.get('order_item_id')
+        return OrderItem.objects.get(id=order_item_id)
 
 class OrderItemDeleteView(DeleteView):
     model = OrderItem
