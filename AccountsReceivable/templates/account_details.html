@@ -1,6 +1,50 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white"> 
-
-</div> 
+<div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white">
+    <h1 class="text-2xl font-bold mb-4">Accounts Receivable Details</h1>
+    <div class="flex flex-col md:flex-row justify-between mb-4">
+        <div class="flex-1">
+            <h2 class="text-lg font-bold mb-2">Current Details</h2>
+            <table class="table-auto">
+                <tbody>
+                    <tr>
+                        <td class="font-bold pr-4">Account Number:</td>
+                        <td>{{ account_receivable.pk }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold pr-4">Customer Name:</td>
+                        <td>{{ account_receivable.order.customer.name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold pr-4">Balance:</td>
+                        <td>${% account_receivable.amount - account_receivable.amount_paid %}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="flex-1">
+            <h2 class="text-lg font-bold mb-2">Accounts Receivable History</h2>
+            <table class="table-auto">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 font-bold">Date</th>
+                        <th class="px-4 py-2 font-bold">Field</th>
+                        <th class="px-4 py-2 font-bold">Old Value</th>
+                        <th class="px-4 py-2 font-bold">New Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for history in account_receivable.history %}
+                    <tr>
+                        <td class="border px-4 py-2">{{ history.date }}</td>
+                        <td class="border px-4 py-2">{{ history.field }}</td>
+                        <td class="border px-4 py-2">{{ history.old_value }}</td>
+                        <td class="border px-4 py-2">{{ history.new_value }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}
