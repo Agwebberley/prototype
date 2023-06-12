@@ -19,14 +19,15 @@ class ItemCreateView(CreateView):
         return JsonResponse(form.errors, status=400)
 
     def get_success_url(self):
-        return reverse_lazy('item_list')
+        return reverse_lazy('items:item_list')
 
 class ItemUpdateView(UpdateView):
     model = Items
     form_class = ItemForm
     template_name = 'item_form.html'
+    success_url = reverse_lazy('items:item_list')
 
 class ItemDeleteView(DeleteView):
     model = Items
-    success_url = reverse_lazy('item_list')
+    success_url = reverse_lazy('items:item_list')
     template_name = 'item_confirm_delete.html'
