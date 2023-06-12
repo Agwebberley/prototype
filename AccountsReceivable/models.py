@@ -6,7 +6,6 @@ import datetime
 
 class AccountsReceivable(models.Model):
     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     # Due date defaults to 30 days from now
     due_date = models.DateField(default=datetime.date.today() + datetime.timedelta(days=30))
