@@ -25,7 +25,17 @@
                     <td class="dark:text-white border px-4 py-2">{{ accounts_receivable.order.customer.id }}</td> 
                     <td class="dark:text-white border px-4 py-2">{{ accounts_receivable.order.customer.name }}</td> 
                     <td class="dark:text-white border px-4 py-2">{{ accounts_receivable.amount }}</td> 
-                    <td class="dark:text-white border px-4 py-2">{{ accounts_receivable.paid }}</td> 
+                    <td class="dark:text-white border px-4 py-2">${{ accounts_receivable.amount_paid }}</td> 
+                    <td class="dark:text-white border px-4 py-2">{% if accounts_receivable.paid %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                            <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clip-rule="evenodd" />
+                          </svg>
+                        {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                            <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                          </svg>
+                          {% endif %}
+                    </td> 
                     <td class="dark:text-white border px-4 py-2">{{ accounts_receivable.due_date }}</td> 
                     <td class="dark:text-white border px-4 py-2"> 
                         <div class="flowbite"> 
@@ -37,16 +47,14 @@
                             <!-- Dropdown menu -->                             
                             <div id="dropdown{{ accounts_receivable.pk }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded shadow w-44 dark:bg-gray-700"> 
                                 <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault{{ accounts_receivable.pk }}"> 
-                                    <li> <a href="{% url 'accounts_receivable:accounts_receivable_update' accounts_receivable.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mark as {% if accounts_receivable.paid %}Not{% endif %} Paid</a> 
+                                    <li> <a href="{% url 'accounts_receivable:toggle_paid' accounts_receivable.pk %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mark as {% if accounts_receivable.paid %}Not{% endif %} Paid</a> 
                                     </li>                                     
-                                    <li> <a href="{% url 'orders:order_update' accounts_receivable.order.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Update Order</a> 
+                                    <li> <a href="{% url 'accounts_receivable:make_payment' accounts_receivable.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Add Payment</a> 
                                     </li>                                     
-                                    <li> <a href="{% url 'orders:order_delete' accounts_receivable.order.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete Order</a> 
+                                    <li> <a href="{% url 'accounts_receivable:change_due_date' accounts_receivable.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Change Due Date</a> 
                                     </li>                                     
-                                    <li> 
-</li>                                     
-                                    <li> 
-</li>                                     
+                                    <li> <a href="{% url 'accounts_receivable:account_details' accounts_receivable.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Details</a> 
+                                    </li>                                     
                                 </ul>                                 
                             </div>                             
                         </div>                         

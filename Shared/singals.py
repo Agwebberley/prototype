@@ -18,7 +18,6 @@ class SNSPublisher:
 def post_signal(sender, instance, **kwargs):
     if sender.__name__ != 'LogMessage':
         publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:CustomerLog')
-        print(f"post {instance.id}")
         if kwargs.get('created'):
             message = f"{sender.__name__} with ID {instance.id} was created"
         elif kwargs.get('update_fields'):
