@@ -36,6 +36,15 @@ class OrderDetailView(ListView):
     model = OrderItem
     template_name = 'order_details.html'
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(order_id=self.kwargs['pk'])
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['order'] = get_object_or_404(Orders, pk=self.kwargs['pk'])
+        return context
+
 class OrderItemCreateView(CreateView):
     model = OrderItem
     form_class = OrderItemForm
