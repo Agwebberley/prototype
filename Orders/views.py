@@ -75,4 +75,4 @@ class OrderItemDeleteView(DeleteView):
     template_name = 'order_item_confirm_delete.html'
 
     def get_success_url(self):
-        return reverse_lazy('orders:order_details', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('orders:order_detail', kwargs={'pk': self.kwargs['pk']})

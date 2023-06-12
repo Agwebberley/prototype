@@ -2,10 +2,13 @@ from django.db import models
 from django.urls import reverse
 from Customers.models import Customers
 from Items.models import Items
+from django.utils import timezone
 
 
 class Orders(models.Model):
     customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
+    ordered_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
     class Meta:
         app_label = 'Orders'
     
@@ -13,7 +16,7 @@ class Orders(models.Model):
         return self.customer
     
     def get_absolute_url(self):
-        return reverse('order_list')
+        return reverse('orders:order_list')
     
     def get_total_price(self):
         order_items = OrderItem.objects.filter(order=self)
@@ -31,7 +34,17 @@ class OrderItem(models.Model):
         return self.order
     
     def get_absolute_url(self):
-        return reverse('order_list')
+        return reverse('orders:order_list')
     
     def get_item_price(self):
         return self.item.price * self.quantity
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.order.updated_date = timezone.now()
+        self.order.save()
+
+    def delete(self, *args, **kwargs):
+        self.order.updated_date = timezone.now()
+        self.order.save()
+        super().delete(*args, **kwargs)
