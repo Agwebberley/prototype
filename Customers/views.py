@@ -20,7 +20,7 @@ class CustomerCreateView(CreateView):
 
 
     def get_success_url(self):
-        return reverse_lazy('customer_list')
+        return reverse_lazy('customers:customer_list')
 
 class CustomerUpdateView(UpdateView):
     model = Customers
@@ -29,5 +29,5 @@ class CustomerUpdateView(UpdateView):
 
 class CustomerDeleteView(DeleteView):
     model = Customers
-    success_url = reverse_lazy('customer_list')
+    success_url = reverse_lazy('customers:customer_list')
     template_name = 'customer_confirm_delete.html'
