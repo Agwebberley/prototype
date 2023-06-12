@@ -1,6 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white"> 
-    
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white mx-auto p-6 rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold mb-4">Add Payment</h1>
+        <form action="#" method="POST">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="amount" class="block text-gray-700 font-bold mb-2">Amount:</label>
+                <input type="text" name="amount" id="amount" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Payment</button>
+
+                <a href="{% url 'accountsreceivable:accountsreceivable_list' %}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
 </div> 
 {% endblock %}
