@@ -8,7 +8,7 @@ class OrderForm(forms.ModelForm):
     
     class Meta:
         model = Orders
-        fields = ('customer', 'item', 'quantity')
+        fields = ('customer',)
     
 
 class OrderItemForm(forms.ModelForm):

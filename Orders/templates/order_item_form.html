@@ -1,20 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white"> 
-    <h1>{% if form.instance.pk %}Update{% else %}Create{% endif %} Order</h1> 
+    <h1>{% if form.instance.pk %}Update{% else %}Create{% endif %} Order Item</h1> 
         <form class="flowbite" method="post"> 
             {% csrf_token %}
             <div class="relative z-0 w-full mb-6 group">                           
     </div>
-            <div class="grid md:gap-6 md:grid-cols-4">
-                <div class="flowbite" data-pg-collapsed>
-                    <label for="customer" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Customer</label>
-                    <select id="customer" name="customer" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        {% for customer in form.customer.field.queryset %}
-                        <option value="{{ customer.id }}" {% if customer.pk == form.customer.value %}selected{% endif %}>{{ customer.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>             
+            <div class="grid md:gap-6 md:grid-cols-4">           
                 <div class="relative z-0 w-full mb-6 group"> 
                     <div class="flowbite" data-pg-collapsed>
                         <label for="item" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Item</label>
