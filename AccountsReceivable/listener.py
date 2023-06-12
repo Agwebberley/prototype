@@ -1,7 +1,7 @@
 from Shared.listener import SQSListener
 
 from .models import AccountsReceivableHistory, AccountsReceivable
-from orders.models import Orders
+from Orders.models import Orders
 
 class AccountsReceivableListener(SQSListener):
     def handle_message(self, message):
