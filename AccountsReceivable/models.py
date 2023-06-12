@@ -16,4 +16,4 @@ class AccountsReceivable(models.Model):
         return f"{self.order.id} - {self.amount}"
     
     def get_absolute_url(self):
-        return reverse('accounts_receivable_list')
+        return reverse('accountsreceivable:accounts_receivable_list')
