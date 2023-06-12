@@ -6,7 +6,6 @@ from Items.models import Items
 
 class Orders(models.Model):
     customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
     class Meta:
         app_label = 'Orders'
     

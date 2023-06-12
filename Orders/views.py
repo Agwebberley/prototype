@@ -19,7 +19,7 @@ class OrderCreateView(CreateView):
         return JsonResponse(form.errors, status=400)
 
     def get_success_url(self):
-        return reverse_lazy('order_list')
+        return reverse_lazy('orders:order_list')
 
 class OrderUpdateView(UpdateView):
     model = Orders
@@ -28,13 +28,13 @@ class OrderUpdateView(UpdateView):
 
 class OrderDeleteView(DeleteView):
     model = Orders
-    success_url = reverse_lazy('order_list')
+    success_url = reverse_lazy('orders:order_list')
     template_name = 'order_confirm_delete.html'
 
 # Order Items
 class OrderDetailView(ListView):
     model = OrderItem
-    template_name = 'order_details.html'
+    template_name = 'order_detail.html'
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -48,10 +48,10 @@ class OrderDetailView(ListView):
 class OrderItemCreateView(CreateView):
     model = OrderItem
     form_class = OrderItemForm
-    template_name = 'orderitem_form.html'
+    template_name = 'order_item_form.html'
 
     def get_success_url(self):
-        return reverse_lazy('order_detail', kwargs={'pk': self.object.order.pk})
+        return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.order.pk})
 
     def form_valid(self, form):
         order = get_object_or_404(Orders, pk=self.kwargs['pk'])
@@ -64,11 +64,11 @@ class OrderItemUpdateView(UpdateView):
     template_name = 'order_item_form.html'
 
     def get_success_url(self):
-        return reverse_lazy('order_details', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('orders:order_details', kwargs={'pk': self.kwargs['pk']})
 
 class OrderItemDeleteView(DeleteView):
     model = OrderItem
     template_name = 'order_item_confirm_delete.html'
 
     def get_success_url(self):
-        return reverse_lazy('order_details', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('orders:order_details', kwargs={'pk': self.kwargs['pk']})
