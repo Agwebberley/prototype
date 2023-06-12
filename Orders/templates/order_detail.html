@@ -13,6 +13,7 @@
                     <th class="dark:text-white text-black px-4 py-2" data-pg-class-style-inline="px-4 py-2" data-pg-class-style="text">Item Id</th>
                     <th class="dark:text-white text-black px-4 py-2" data-pg-class-style-inline="px-4 py-2" data-pg-class-style="text">Item Name</th>
                     <th class="dark:text-white text-black px-4 py-2" data-pg-class-style-inline="px-4 py-2" data-pg-class-style="text">Quantity</th>
+                    <th class="dark:text-white text-black px-4 py-2" data-pg-class-style-inline="px-4 py-2" data-pg-class-style="text">Price</th>
                     <th class="dark:text-white text-black px-4 py-2" data-pg-class-style-inline="px-4 py-2" data-pg-class-style="text">Actions</th>
                 </tr>
             </thead>
@@ -23,6 +24,7 @@
                     <td class="dark:text-white border px-4 py-2">{{ orderitem.item.id }}</td>
                     <td class="dark:text-white border px-4 py-2">{{ orderitem.item.name }}</td>
                     <td class="dark:text-white border px-4 py-2">{{ orderitem.quantity }}</td>
+                    <td class="dark:text-white border px-4 py-2">{{ orderitem.get_item_price }}</td>
                     <td class="dark:text-white border px-4 py-2">
                         <div class="flowbite">
                             <button id="dropdownDefault{{ order.pk }}" data-dropdown-toggle="dropdown{{ orderitem.pk }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Actions
@@ -45,6 +47,10 @@
                     </td>
                 </tr>
                 {% endfor %}
+                <tr>
+                    <td class="dark:text-white border px-4 py-2 row-span-2" rowspan="2">Total Price: </td>
+                    <td class="dark:text-white border px-4 py-2 row-span-4" rowspan="4">${{ order.get_total_price }}</td>
+                </tr>
             </tbody>
         </table>
     </div>

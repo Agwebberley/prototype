@@ -12,6 +12,7 @@
                     <th data-pg-class-style="text" data-pg-class-style-inline="px-4 py-2" class="dark:text-white text-black px-4 py-2">id</th>
                     <th class="dark:text-white text-black px-4 py-2" data-pg-class-style-inline="px-4 py-2" data-pg-class-style="text">Customer id</th>
                     <th class="dark:text-white text-black px-4 py-2" data-pg-class-style-inline="px-4 py-2" data-pg-class-style="text">Customer Name</th>
+                    <th class="dark:text-white text-black px-4 py-2" data-pg-class-style-inline="px-4 py-2" data-pg-class-style="text">Total Price</th>
                     <th class="dark:text-white text-black px-4 py-2" data-pg-class-style-inline="px-4 py-2" data-pg-class-style="text">Actions</th>
                 </tr>
             </thead>
@@ -21,6 +22,7 @@
                     <td class="dark:text-white border px-4 py-2">{{ order.id }}</td>
                     <td class="dark:text-white border px-4 py-2">{{ order.customer.id }}</td>
                     <td class="dark:text-white border px-4 py-2">{{ order.customer.name }}</td>
+                    <td class="dark:text-white border px-4 py-2">${{ order.get_total_price }}</td>
                     <td class="dark:text-white border px-4 py-2">
                         <div class="flowbite">
                             <button id="dropdownDefault{{ order.pk }}" data-dropdown-toggle="dropdown{{ order.pk }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Actions

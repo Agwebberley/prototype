@@ -14,6 +14,11 @@ class Orders(models.Model):
     
     def get_absolute_url(self):
         return reverse('order_list')
+    
+    def get_total_price(self):
+        order_items = OrderItem.objects.filter(order=self)
+        total_price = sum([item.get_item_price() for item in order_items])
+        return "{:,}".format(total_price)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
@@ -27,3 +32,6 @@ class OrderItem(models.Model):
     
     def get_absolute_url(self):
         return reverse('order_list')
+    
+    def get_item_price(self):
+        return self.item.price * self.quantity
