@@ -16,6 +16,7 @@ class SNSPublisher:
 @receiver(post_save)
 @receiver(post_delete)
 def post_signal(sender, instance, **kwargs):
+    print("post_signal")
     if sender.__name__ != 'LogMessage':
         publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:CustomerLog')
         if kwargs.get('created'):

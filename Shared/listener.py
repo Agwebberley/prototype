@@ -1,11 +1,11 @@
 import json
 import logging
 import boto3
-import threading
+from threading import Thread
+
 # This is a Python class that listens to an Amazon Simple Queue Service (SQS) queue and handles
 # messages received.
-
-class SQSListener(threading.Thread):
+class SQSListener(Thread):
     def __init__(self, queue_url):
         self.queue_url = queue_url
         self.should_quit = False
@@ -13,11 +13,15 @@ class SQSListener(threading.Thread):
     def start(self):
         self.sqs = boto3.client('sqs', region_name='us-west-2')
         while not self.should_quit:
-            response = self.sqs.receive_message(
-                QueueUrl=self.queue_url,
-                MaxNumberOfMessages=1,
-                WaitTimeSeconds=20
-            )
+            try:
+                response = self.sqs.receive_message(
+                    QueueUrl=self.queue_url,
+                    MaxNumberOfMessages=1,
+                    WaitTimeSeconds=20
+                )
+            except Exception as e:
+                logging.error(f"Error receiving message: {e}")
+                continue
 
             if 'Messages' in response:
                 for message in response['Messages']:
@@ -43,7 +47,7 @@ class SQSListener(threading.Thread):
 # SQSListener.
 class LogListener(SQSListener):
     def handle_message(self, message):
-        from Customers.models import LogMessage
+        from .models import LogMessage
 
         # message['Body'] is a JSON string, parse it to a dictionary
         message_dict = json.loads(message['Body'])

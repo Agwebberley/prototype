@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import Inventory
-from Shared.singals import SNSPublisher
+from Shared.signals import SNSPublisher
 
 @receiver(post_save, sender=Inventory)
 @receiver(post_delete, sender=Inventory)
