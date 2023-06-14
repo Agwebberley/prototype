@@ -39,7 +39,6 @@ class InventoryHistoryListView(ListView):
         Inventory = self.kwargs['pk']
         return InventoryHistory.objects.filter(Inventory=Inventory.id)
     
-
 # Pick
 class PickListView(ListView):
     model = Pick

@@ -17,7 +17,6 @@ class Command(BaseCommand):
         listener = PrototypeSQSListener([log_queue, accounts_receivable_queue, inventory_queue])
         listener.listen()
 
-
 class PrototypeSQSListener(MultiSQSListener):
     def handle_message(self, queue_name, bus_name, priority, message):
         print("Handling message from queue: " + queue_name)
