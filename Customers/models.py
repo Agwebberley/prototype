@@ -11,11 +11,9 @@ class Customers(models.Model):
     email = models.CharField(max_length=200)
     class Meta:
         app_label = 'Customers'
-
-    
-    def __str__(self):
-        return self.name
     
     def get_absolute_url(self):
         return reverse('data_list')
     
+    def __str__(self):
+        return str(self.name)

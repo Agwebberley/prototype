@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white"> 
-{% extends 'base.html' %}
-
-{% block content %}
+<div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white">
     <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white mx-auto p-6 rounded-lg shadow-lg">
         <h1 class="text-2xl font-bold mb-4">Add Payment</h1>
         <form action="#" method="POST">
@@ -15,10 +12,9 @@
             <div class="flex items-center justify-between">
                 <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Payment</button>
 
-                <a href="{% url 'accountsreceivable:accounts_receivable_list' %}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">Cancel</a>
+                <a href="{% url 'accounts_receivable:accounts_receivable_list' %}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">Cancel</a>
             </div>
         </form>
     </div>
-{% endblock %}
-</div> 
+</div>
 {% endblock %}

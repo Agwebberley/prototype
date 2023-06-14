@@ -41,7 +41,7 @@ class PrototypeSQSListener(MultiSQSListener):
             if message_body[0] == 'order' and message_body[1] == 'created':
                 try:
                     order = Orders.objects.get(id=message_body[2])
-                    order_total = float(order.get_order_total())
+                    order_total = float(order.get_total_price())
                     AccountsReceivable.objects.create(order=order, amount=order_total)
                 except Orders.DoesNotExist:
                     print(f"Order with id {message_body[2]} does not exist")
@@ -62,7 +62,7 @@ class PrototypeSQSListener(MultiSQSListener):
                 order = Orders.objects.get(id=message_body[2])
                 try:
                     accounts_receivable = AccountsReceivable.objects.get(order=order)
-                    order_total = float(order.get_order_total())
+                    order_total = float(order.get_total_price())
                     accounts_receivable.amount = order_total
                     accounts_receivable.save()
                 except AccountsReceivable.DoesNotExist:
@@ -93,6 +93,8 @@ class PrototypeSQSListener(MultiSQSListener):
                     print(f"Order with id {message_body[2]} did not create")
         else:
             raise Exception('Unknown queue name: {}'.format(queue_name))
+        
+        message.delete()
 
 
 if __name__ == "__main__":
