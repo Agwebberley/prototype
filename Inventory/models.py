@@ -16,6 +16,7 @@ class Inventory(models.Model):
         return reverse('inventory_list')
 
 class InventoryHistory(models.Model):
+    inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE, editable=False)
     item = models.ForeignKey(Items, on_delete=models.CASCADE, editable=False)
     quantity = models.IntegerField(editable=False, default=0)
     types = ["shipment", "order", "return", "adjustment"]
@@ -31,10 +32,9 @@ class InventoryHistory(models.Model):
         return reverse('inventory_list')
 
 class Pick(models.Model):
+    order = models.OneToOneField('Order', on_delete=models.CASCADE)
     item = models.ForeignKey(Items, on_delete=models.CASCADE)
     location = models.CharField(max_length=100)
-    quantity = models.IntegerField()
-    order_number = models.CharField(max_length=100)
     is_complete = models.BooleanField(default=False)
     class Meta:
         app_label = 'Inventory'
@@ -47,7 +47,7 @@ class Pick(models.Model):
 
 class Bin(models.Model):
     location = models.ForeignKey('Location', on_delete=models.CASCADE)
-    items = models.ManyToManyField(Items)
+    items = models.ManyToManyField(Items, blank=True)
     class Meta:
         app_label = 'Inventory'
     
@@ -57,14 +57,6 @@ class Bin(models.Model):
     def get_absolute_url(self):
         return reverse('bin_list')
     
-    def restock(self):
-        for item in self.items.all():
-            inventory = Inventory.objects.get(item=item)
-            inventory.quantity += 1
-            inventory.save()
-        self.restocked = True
-        self.save()
-
     def save(self, *args, **kwargs):
         if not self.pk:
             num_bins = Bin.objects.filter(location=self.location).count()
@@ -73,6 +65,7 @@ class Bin(models.Model):
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
+    amount_of_bins = models.IntegerField(editable=False)
     class Meta:
         app_label = 'Inventory'
     
@@ -81,3 +74,13 @@ class Location(models.Model):
     
     def get_absolute_url(self):
         return reverse('location_list')
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # If Location is new, create a bin for it
+        if not self.amount_of_bins:
+            self.amount_of_bins = 1
+        if self.amount_of_bins > 0:
+            for i in range(self.amount_of_bins):
+                bin = Bin(location=self)
+                bin.save()

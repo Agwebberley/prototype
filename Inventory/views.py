@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
-from .models import Inventory
+from .models import Inventory, InventoryHistory, Pick, Bin, Location
 from .forms import InventoryForm
 
 
@@ -31,3 +31,45 @@ class InventoryDeleteView(DeleteView):
     model = Inventory
     success_url = reverse_lazy('inventory_list')
     template_name = 'inventory_confirm_delete.html'
+
+# InventoryHistory
+class InventoryHistoryListView(ListView):
+    model = InventoryHistory
+    template_name = 'inventoryhistory.html'
+
+    # Limit to InventoryHistory for a specific item
+    def get_queryset(self):
+        Inventory = self.kwargs['pk']
+        return InventoryHistory.objects.filter(Inventory=Inventory.id)
+    
+
+# Pick
+class PickListView(ListView):
+    model = Pick
+    template_name = 'pick.html'
+
+class PickUpdateView(UpdateView):
+    model = Pick
+    fields = ('is_complete')
+    template_name = 'pick_form.html'
+
+    def form_invalid(self, form):
+        return JsonResponse(form.errors, status=400)
+    
+    def get_success_url(self):
+        return reverse_lazy('pick_list')
+
+# Bin
+class BinListView(ListView):
+    model = Bin
+    template_name = 'bin.html'
+
+class BinDetailView(DetailView):
+    model = Bin
+    template_name = 'bin_detail.html'
+
+# Location
+class LocationCreateView(CreateView):
+    model = Location
+    template_name = 'location.html'
+
