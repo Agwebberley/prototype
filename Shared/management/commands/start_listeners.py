@@ -71,7 +71,27 @@ class PrototypeSQSListener(MultiSQSListener):
             else:
                 raise Exception('Unknown message: {}'.format(message_body))
         elif queue_name == 'Inventory':
-            pass
+            from Inventory.models import Inventory, InventoryHistory, Pick
+            from Items.models import Items
+            message_json = json.loads(message.body)
+            message_body = message_json['Message'].split(' ')
+            if message_body[0] == 'item' and message_body[1] == 'created':
+                # create an Inventory object for the item
+                try:
+                    item = Items.objects.get(id=message_body[2])
+                    Inventory.objects.create(item=item, quantity=0)
+                    # get the id of the Inventory object that was just created
+                    inventory = Inventory.objects.get(item_id=message_body[2])
+                    InventoryHistory.objects.create(inventory=inventory, item=item, quantity=0, type='adjustment')
+                except:
+                    print(f"Item with id {message_body[2]} did not create")
+            elif message_body[0] == 'order' and message_body[1] == 'created':
+                # create a Pick object for the order
+                try:
+                    order = Orders.objects.get(id=message_body[2])
+                    Pick.objects.create(order=order)
+                except:
+                    print(f"Order with id {message_body[2]} did not create")
         else:
             raise Exception('Unknown queue name: {}'.format(queue_name))
 

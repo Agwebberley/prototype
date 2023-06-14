@@ -1,7 +1,8 @@
 from django.db import models
 from django.urls import reverse
 from Items.models import Items
-from Orders.models import Orders, OrderItems
+from Orders.models import Orders, OrderItem
+from django.core.exceptions import ValidationError
 
 class Inventory(models.Model):
     item = models.OneToOneField(Items, on_delete=models.CASCADE)
@@ -34,8 +35,8 @@ class InventoryHistory(models.Model):
 
 class Pick(models.Model):
     order = models.OneToOneField(Orders, on_delete=models.CASCADE)
-    items = models.ManyToManyField(OrderItems, blank=True)
-    location = models.ForeignKey('Location', on_delete=models.CASCADE)
+    items = models.ManyToManyField(OrderItem, blank=True)
+    location = models.ForeignKey('Location', on_delete=models.CASCADE, blank=True, null=True)
     is_complete = models.BooleanField(default=False)
     class Meta:
         app_label = 'Inventory'
@@ -44,11 +45,15 @@ class Pick(models.Model):
         return f"{self.item} - {self.quantity} ({self.location}) for order {self.order_number}"
     
     def get_absolute_url(self):
-        return reverse('pick_detail', args=[str(self.id)])
+        return reverse('pick_detail', args=[str(self.id)])    
+
+    def clean(self):
+        if self.is_complete and not self.location:
+            raise ValidationError("Location cannot be blank if pick is complete.")
     
     def save(self, *args, **kwargs):
         # Set items to be picked to the items in the order
-        self.items = OrderItems.objects.filter(order=self.order)
+        self.items = OrderItem.objects.filter(order=self.order)
         super().save(*args, **kwargs)
 
 class Bin(models.Model):
