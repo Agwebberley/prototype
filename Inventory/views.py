@@ -3,7 +3,6 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from .models import Inventory, InventoryHistory, Pick, Bin, Location
-from .forms import InventoryForm
 
 
 # Inventory
@@ -11,26 +10,24 @@ class InventoryListView(ListView):
     model = Inventory
     template_name = 'inventory.html'
 
-class InventoryCreateView(CreateView):
+class InventoryUpdateView(UpdateView):
     model = Inventory
-    form_class = InventoryForm
+    fields = ('quantity')
     template_name = 'inventory_form.html'
 
     def form_invalid(self, form):
         return JsonResponse(form.errors, status=400)
-
+    
     def get_success_url(self):
         return reverse_lazy('inventory_list')
-
-class InventoryUpdateView(UpdateView):
-    model = Inventory
-    form_class = InventoryForm
-    template_name = 'inventory_form.html'
-
-class InventoryDeleteView(DeleteView):
-    model = Inventory
-    success_url = reverse_lazy('inventory_list')
-    template_name = 'inventory_confirm_delete.html'
+    
+    # Create a new InventoryHistory entry when Inventory is updated
+    def form_valid(self, form):
+        form.instance.inventory = self.object
+        form.instance.item = self.object.item
+        form.instance.quantity = self.object.quantity
+        form.instance.type = "adjustment"
+        return super().form_valid(form)
 
 # InventoryHistory
 class InventoryHistoryListView(ListView):
