@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from .models import AccountsReceivable, AccountsReceivableHistory, AccountsReceivablePayment
 from decimal import Decimal
 
+# TODO: Create a new account if the account is marked as paid and the order is updated to be greater than the paid amount
 # Accounts Receivable
 class AccountsReceivableListView(ListView):
     model = AccountsReceivable
