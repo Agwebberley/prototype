@@ -41,7 +41,17 @@ class InventoryUpdateView(UpdateView):
 # InventoryHistory
 class InventoryHistoryListView(ListView):
     model = InventoryHistory
-    template_name = 'inventoryhistory.html'
+    template_name = 'inventory_list.html'
+
+    # Set model_fields to the fields of the model
+    model_fields = [field.name for field in Inventory._meta.get_fields()]
+    patterns = ['inventory_update', 'inventoryhistory_list', 'pick_list', 'pick_update', 'bin_list']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_fields'] = self.model_fields
+        context['patterns'] = self.patterns
+        return context
 
     # Limit to InventoryHistory for a specific item
     def get_queryset(self):
@@ -52,6 +62,15 @@ class InventoryHistoryListView(ListView):
 class PickListView(ListView):
     model = Pick
     template_name = 'pick.html'
+
+    # Set model_fields to the fields of the model
+    model_fields = [field.name for field in Inventory._meta.get_fields()]
+    model_fields.remove('inventoryhistory')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_fields'] = self.model_fields
+        return context
 
 class PickUpdateView(UpdateView):
     model = Pick

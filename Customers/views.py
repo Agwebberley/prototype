@@ -13,11 +13,13 @@ class CustomerListView(ListView):
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in Customers._meta.get_fields()]
     model_fields.remove('orders')
-    print(model_fields)
+    patterns = {'Update': 'customers:customer_update', 'Delete': 'customers:customer_delete'}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields
+        context['patterns'] = (self.patterns)
+        print(context)
         return context
 
 class CustomerCreateView(CreateView):
