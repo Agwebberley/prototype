@@ -65,7 +65,7 @@ class InventoryHistoryListView(ListView):
 # Pick
 class PickListView(ListView):
     model = Pick
-    template_name = 'pick.html'
+    template_name = 'inventory_list.html'
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in Inventory._meta.get_fields()]
