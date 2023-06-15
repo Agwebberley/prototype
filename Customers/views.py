@@ -28,7 +28,6 @@ class CustomerCreateView(CreateView):
     def form_invalid(self, form):
         return JsonResponse(form.errors, status=400)
 
-
     def get_success_url(self):
         return reverse_lazy('customers:customer_list')
 

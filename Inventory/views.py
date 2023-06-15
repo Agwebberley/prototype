@@ -8,7 +8,16 @@ from .models import Inventory, InventoryHistory, Pick, Bin, Location
 # Inventory
 class InventoryListView(ListView):
     model = Inventory
-    template_name = 'inventory.html'
+    template_name = 'inventory_list.html'
+
+    # Set model_fields to the fields of the model
+    model_fields = [field.name for field in Inventory._meta.get_fields()]
+    model_fields.remove('inventoryhistory')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_fields'] = self.model_fields
+        return context
 
 class InventoryUpdateView(UpdateView):
     model = Inventory
