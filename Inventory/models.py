@@ -21,12 +21,24 @@ class InventoryHistory(models.Model):
     inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE, editable=False)
     item = models.ForeignKey(Items, on_delete=models.CASCADE, editable=False)
     quantity = models.IntegerField(editable=False, default=0)
+    change = models.IntegerField(editable=False, default=0)
     types = ["shipment", "order", "return", "adjustment"]
     type = models.CharField(max_length=10, choices=[(x, x) for x in types], default="shipment", editable=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     class Meta:
         app_label = 'Inventory'
     
+    def save(self, *args, **kwargs):
+        self.item = self.inventory.item
+        # Get the change in quantity
+        # Get the last InventoryHistory entry for this item
+        last_entry = InventoryHistory.objects.filter(item=self.item).order_by('-timestamp').first()
+        if last_entry:
+            self.change = self.quantity - last_entry.quantity
+        else:
+            self.change = self.quantity
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.item} - {self.quantity}"
     

@@ -35,11 +35,11 @@ class InventoryUpdateView(UpdateView):
     
     # Create a new InventoryHistory entry when Inventory is updated
     def form_valid(self, form):
-        print("form_valid")
-        form.instance.inventory = self.object
-        form.instance.item = self.object.item
-        form.instance.quantity = self.object.quantity
-        form.instance.type = "adjustment"
+        InventoryHistory.objects.create(
+            inventory=form.save(),
+            quantity=form.cleaned_data['quantity'],
+            type='adjustment'
+        )
         return super().form_valid(form)
 
 # InventoryHistory
@@ -50,6 +50,7 @@ class InventoryHistoryListView(ListView):
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in InventoryHistory._meta.get_fields()]
     model_fields.remove('inventory')
+    model_fields.remove('item')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
