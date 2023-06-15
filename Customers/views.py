@@ -19,7 +19,6 @@ class CustomerListView(ListView):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields
         context['patterns'] = (self.patterns)
-        print(context)
         return context
 
 class CustomerCreateView(CreateView):

@@ -41,9 +41,6 @@ class Pick(models.Model):
     class Meta:
         app_label = 'Inventory'
     
-    def __str__(self):
-        return f"{self.item} - {self.quantity} ({self.location}) for order {self.order_number}"
-    
     def get_absolute_url(self):
         return reverse('pick_detail', args=[str(self.id)])    
 
@@ -61,9 +58,6 @@ class Bin(models.Model):
     items = models.ManyToManyField(Items, blank=True)
     class Meta:
         app_label = 'Inventory'
-    
-    def __str__(self):
-        return self.name
     
     def get_absolute_url(self):
         return reverse('bin_list')
