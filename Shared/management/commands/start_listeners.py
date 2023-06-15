@@ -2,6 +2,7 @@ import json
 from django.core.management.base import BaseCommand
 from multi_sqs_listener import QueueConfig, EventBus, MultiSQSListener
 import sys
+from decimal import Decimal
 
 class Command(BaseCommand):
     help = 'Starts the SQS listeners'
@@ -41,7 +42,7 @@ class PrototypeSQSListener(MultiSQSListener):
             if message_body[0] == 'order' and message_body[1] == 'created':
                 try:
                     order = Orders.objects.get(id=message_body[2])
-                    order_total = float(order.get_total_price())
+                    order_total = Decimal(order.get_total_price())
                     AccountsReceivable.objects.create(order=order, amount=order_total)
                 except Orders.DoesNotExist:
                     print(f"Order with id {message_body[2]} does not exist")
@@ -62,7 +63,7 @@ class PrototypeSQSListener(MultiSQSListener):
                 order = Orders.objects.get(id=message_body[2])
                 try:
                     accounts_receivable = AccountsReceivable.objects.get(order=order)
-                    order_total = float(order.get_total_price())
+                    order_total = Decimal(order.get_total_price())
                     accounts_receivable.amount = order_total
                     accounts_receivable.save()
                 except AccountsReceivable.DoesNotExist:
@@ -85,6 +86,7 @@ class PrototypeSQSListener(MultiSQSListener):
                 except:
                     print(f"Item with id {message_body[2]} did not create")
             elif message_body[0] == 'order' and message_body[1] == 'created':
+                from Orders.models import Orders
                 # create a Pick object for the order
                 try:
                     order = Orders.objects.get(id=message_body[2])
