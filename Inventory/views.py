@@ -1,3 +1,4 @@
+from typing import Any
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
@@ -68,16 +69,15 @@ class PickListView(ListView):
     template_name = 'inventory_list.html'
 
     # Set model_fields to the fields of the model
-    model_fields = [field.name for field in Inventory._meta.get_fields()]
-    model_fields.remove('inventoryhistory')
+    model_fields = [field.name for field in Pick._meta.get_fields()]
 
     # Action Button Url Patterns
-    
+    patterns = {'Pick Order': 'inventory:pick_update'}   
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields
-        
+        context['patterns'] = self.patterns
         return context
 
 class PickUpdateView(UpdateView):
@@ -94,7 +94,15 @@ class PickUpdateView(UpdateView):
 # Bin
 class BinListView(ListView):
     model = Bin
-    template_name = 'bin.html'
+    template_name = 'inventory_list.html'
+
+    # Set model_fields to the fields of the model
+    model_fields = [field.name for field in Bin._meta.get_fields()]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_fields'] = self.model_fields
+        return context
 
 class BinDetailView(DetailView):
     model = Bin
