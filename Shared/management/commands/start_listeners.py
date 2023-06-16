@@ -36,13 +36,12 @@ class PrototypeSQSListener(MultiSQSListener):
             message_json = json.loads(message.body)
             message_body = message_json['Message'].split(' ')
 
-
             # if the message is an order created message
             # create an AccountsReceivable object for the order
             if message_body[0] == 'order' and message_body[1] == 'created':
                 try:
                     order = Orders.objects.get(id=message_body[2])
-                    order_total = Decimal(order.get_total_price())
+                    order_total = Decimal(order.get_total_price_float())
                     AccountsReceivable.objects.create(order=order, amount=order_total)
                 except Orders.DoesNotExist:
                     print(f"Order with id {message_body[2]} does not exist")
@@ -63,7 +62,7 @@ class PrototypeSQSListener(MultiSQSListener):
                 order = Orders.objects.get(id=message_body[2])
                 try:
                     accounts_receivable = AccountsReceivable.objects.get(order=order)
-                    order_total = Decimal(order.get_total_price())
+                    order_total = Decimal(order.get_total_price_float())
                     accounts_receivable.amount = order_total
                     accounts_receivable.save()
                 except AccountsReceivable.DoesNotExist:
@@ -86,6 +85,7 @@ class PrototypeSQSListener(MultiSQSListener):
                 except:
                     print(f"Item with id {message_body[2]} did not create")
             elif message_body[0] == 'order' and message_body[1] == 'created':
+                print("Received message from Inventory queue")
                 from Orders.models import Orders
                 # create a Pick object for the order
                 try:

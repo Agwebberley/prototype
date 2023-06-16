@@ -22,6 +22,11 @@ class Orders(models.Model):
         order_items = OrderItem.objects.filter(order=self)
         total_price = sum([item.get_item_price() for item in order_items])
         return "{:,}".format(total_price)
+    
+    def get_total_price_float(self):
+        order_items = OrderItem.objects.filter(order=self)
+        total_price = sum([item.get_item_price() for item in order_items])
+        return total_price
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
