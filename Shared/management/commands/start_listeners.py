@@ -95,6 +95,7 @@ class PrototypeSQSListener(MultiSQSListener):
                 except Exception as e:
                     print(f"Order with id {message_body[2]} did not create")
                     print(e)
+            
         else:
             raise Exception('Unknown queue name: {}'.format(queue_name))
         
