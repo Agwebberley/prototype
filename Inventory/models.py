@@ -52,9 +52,6 @@ class Pick(models.Model):
     is_complete = models.BooleanField(default=False)
     class Meta:
         app_label = 'Inventory'
-    
-    def get_absolute_url(self):
-        return reverse('pick_detail', args=[str(self.id)])    
 
     def clean(self):
         if self.is_complete and not self.location:
@@ -62,10 +59,12 @@ class Pick(models.Model):
     
     def save(self, *args, **kwargs):
         # Set items to be picked to the items in the order
-        self.items = OrderItem.objects.filter(order=self.order)
         super().save(*args, **kwargs)
+        self.items.set(OrderItem.objects.filter(order=self.order))
+        self.save()
 
 class Bin(models.Model):
+    name = models.CharField(max_length=100, blank=True, null=True)
     location = models.ForeignKey('Location', on_delete=models.CASCADE)
     items = models.ManyToManyField(Items, blank=True)
     class Meta:
@@ -77,12 +76,12 @@ class Bin(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             num_bins = Bin.objects.filter(location=self.location).count()
-            self.pk = f"{self.location.id}-{num_bins + 1}"
+            self.name = f"{self.location.id}-{num_bins + 1}"
         super().save(*args, **kwargs)
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
-    amount_of_bins = models.IntegerField(editable=False)
+    amount_of_bins = models.IntegerField(blank=True, null=True)
     class Meta:
         app_label = 'Inventory'
     

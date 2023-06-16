@@ -4,7 +4,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from .models import Inventory, InventoryHistory, Pick, Bin, Location
-from .forms import InventoryForm
+from .forms import InventoryForm, PickForm
 
 # Inventory
 class InventoryListView(ListView):
@@ -70,6 +70,7 @@ class PickListView(ListView):
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in Pick._meta.get_fields()]
+    model_fields.remove('items')
 
     # Action Button Url Patterns
     patterns = {'Pick Order': 'inventory:pick_update'}   
@@ -82,8 +83,8 @@ class PickListView(ListView):
 
 class PickUpdateView(UpdateView):
     model = Pick
-    fields = ('is_complete')
-    template_name = 'pick_form.html'
+    form_class = PickForm
+    template_name = 'inventory_form.html'
 
     def form_invalid(self, form):
         return JsonResponse(form.errors, status=400)
@@ -98,6 +99,7 @@ class BinListView(ListView):
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in Bin._meta.get_fields()]
+    model_fields.remove('items')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -21,7 +21,6 @@ class Command(BaseCommand):
 class PrototypeSQSListener(MultiSQSListener):
     def handle_message(self, queue_name, bus_name, priority, message):
         print("Handling message from queue: " + queue_name)
-        sys.stdout.flush()
         if queue_name == 'CustomerLog':
                 from Shared.models import LogMessage
                 print("Received message from CustomerLog queue")
@@ -82,8 +81,10 @@ class PrototypeSQSListener(MultiSQSListener):
                     # get the id of the Inventory object that was just created
                     inventory = Inventory.objects.get(item_id=message_body[2])
                     InventoryHistory.objects.create(inventory=inventory, item=item, quantity=0, type='adjustment')
-                except:
+                except Exception as e:
                     print(f"Item with id {message_body[2]} did not create")
+                    print(e)
+                    
             elif message_body[0] == 'order' and message_body[1] == 'created':
                 print("Received message from Inventory queue")
                 from Orders.models import Orders
@@ -91,8 +92,9 @@ class PrototypeSQSListener(MultiSQSListener):
                 try:
                     order = Orders.objects.get(id=message_body[2])
                     Pick.objects.create(order=order)
-                except:
+                except Exception as e:
                     print(f"Order with id {message_body[2]} did not create")
+                    print(e)
         else:
             raise Exception('Unknown queue name: {}'.format(queue_name))
         

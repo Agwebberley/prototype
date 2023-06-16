@@ -13,7 +13,7 @@ class Orders(models.Model):
         app_label = 'Orders'
     
     def __str__(self):
-        return self.customer
+        return str(self.pk)
     
     def get_absolute_url(self):
         return reverse('orders:order_list')
