@@ -62,6 +62,35 @@ class Pick(models.Model):
         super().save(*args, **kwargs)
         self.items.set(OrderItem.objects.filter(order=self.order))
         self.save()
+
+        # Pull the items from the bins and update the inventory
+        # Only pull items if the pick is complete and only pull from bins at the same location as the pick
+        if self.is_complete and self.location:
+            # For each item in the pick
+            for item in self.items.all():
+                # Get the bins with the item
+                bins = Bin.objects.filter(items=item.item, location=self.location)
+                # For each bin
+                for bin in bins:
+                    # Check if the bin has enough items
+                    if bin.items.filter(pk=item.item.pk).count() >= item.quantity:
+                        # Remove the item from the bin
+                        bin.items.remove(item.item)
+                        # Update the inventory
+                        inventory = Inventory.objects.get(item=item.item)
+                        inventory.quantity -= item.quantity
+                        inventory.save()
+                        break
+                    # Create an inventory history entry
+                    inventory = Inventory.objects.get(item=item.item)
+                    history = InventoryHistory(inventory=inventory, quantity=inventory.quantity, type="order", change=-item.quantity)
+                    history.save()
+                        
+                
+                # If the item was not found in any bin, raise a validation error
+                else:
+                    raise ValidationError(f"Not enough items in the bins for {item.item}.")
+
         
 
 class Bin(models.Model):
