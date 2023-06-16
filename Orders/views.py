@@ -47,7 +47,14 @@ class OrderUpdateView(UpdateView):
 class OrderDeleteView(DeleteView):
     model = Orders
     success_url = reverse_lazy('orders:order_list')
-    template_name = 'order_confirm_delete.html'
+    template_name = 'delete.html'
+
+    def get_context_data(self, **kwargs):
+        object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context['object_name'] = 'Order ' + str(object.pk)
+        context['pattern'] = 'orders:order_list'
+        return context
 
 # Order Items
 class OrderDetailView(ListView):
@@ -69,7 +76,7 @@ class OrderItemCreateView(CreateView):
     template_name = 'order_item_form.html'
 
     def get_success_url(self):
-        return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.order.pk})
+        return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.order.pk}) # type: ignore
 
     def form_valid(self, form):
         order = get_object_or_404(Orders, pk=self.kwargs['pk'])
