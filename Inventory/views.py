@@ -66,7 +66,7 @@ class InventoryHistoryListView(ListView):
 # Pick
 class PickListView(ListView):
     model = Pick
-    template_name = 'inventory_list.html'
+    template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in Pick._meta.get_fields()]
@@ -79,12 +79,13 @@ class PickListView(ListView):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields
         context['patterns'] = self.patterns
+        context['h1'] = 'Pick List'
         return context
 
 class PickUpdateView(UpdateView):
     model = Pick
     form_class = PickForm
-    template_name = 'inventory_form.html'
+    template_name = 'form.html'
 
     def form_invalid(self, form):
         return JsonResponse(form.errors, status=400)
@@ -95,7 +96,7 @@ class PickUpdateView(UpdateView):
 # Bin
 class BinListView(ListView):
     model = Bin
-    template_name = 'inventory_list.html'
+    template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in Bin._meta.get_fields()]
@@ -104,14 +105,15 @@ class BinListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields
+        context['h1'] = 'Bin List'
         return context
 
-class BinDetailView(DetailView):
-    model = Bin
-    template_name = 'bin_detail.html'
+#class BinDetailView(DetailView):
+#    model = Bin
+#    template_name = 'bin_detail.html'
 
 # Location
-class LocationCreateView(CreateView):
-    model = Location
-    template_name = 'location.html'
+#class LocationCreateView(CreateView):
+#    model = Location
+#    template_name = 'location.html'
 
