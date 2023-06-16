@@ -8,7 +8,25 @@ from .forms import OrderForm, OrderItemForm
 # Orders
 class OrderListView(ListView):
     model = Orders
-    template_name = 'orders.html'
+    template_name = 'listview.html'
+
+    # Set model_fields to the fields of the model
+    model_fields = [field.name for field in Orders._meta.get_fields()]
+    model_fields.remove('orderitem')
+    model_fields.remove('pick')
+    model_fields.remove('accountsreceivable')
+    model_fields.append('get_total_price')
+
+    patterns = {'Update': 'orders:order_update', 'Delete': 'orders:order_delete'}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_fields'] = self.model_fields
+        context['patterns'] = (self.patterns)
+        context['h1'] = 'Orders'
+        context['bpattern'] = 'orders:order_create'
+        context['bname'] = 'Create Order'
+        return context
 
 class OrderCreateView(CreateView):
     model = Orders
