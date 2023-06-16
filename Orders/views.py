@@ -1,3 +1,4 @@
+from typing import Any
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -17,7 +18,7 @@ class OrderListView(ListView):
     model_fields.remove('accountsreceivable')
     model_fields.append('get_total_price')
 
-    patterns = {'Update': 'orders:order_update', 'Delete': 'orders:order_delete'}
+    patterns = {'Details': 'orders:order_detail' ,'Update': 'orders:order_update', 'Delete': 'orders:order_delete'}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,7 +43,7 @@ class OrderCreateView(CreateView):
 class OrderUpdateView(UpdateView):
     model = Orders
     form_class = OrderForm
-    template_name = 'order_form.html'
+    template_name = 'form.html'
 
 class OrderDeleteView(DeleteView):
     model = Orders
@@ -73,7 +74,7 @@ class OrderDetailView(ListView):
 class OrderItemCreateView(CreateView):
     model = OrderItem
     form_class = OrderItemForm
-    template_name = 'order_item_form.html'
+    template_name = 'form.html'
 
     def get_success_url(self):
         return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.order.pk}) # type: ignore
@@ -86,7 +87,7 @@ class OrderItemCreateView(CreateView):
 class OrderItemUpdateView(UpdateView):
     model = OrderItem
     form_class = OrderItemForm
-    template_name = 'order_item_form.html'
+    template_name = 'form.html'
 
     def get_success_url(self):
         return reverse_lazy('orders:order_detail', kwargs={'pk': self.kwargs['pk']})
@@ -97,7 +98,14 @@ class OrderItemUpdateView(UpdateView):
 
 class OrderItemDeleteView(DeleteView):
     model = OrderItem
-    template_name = 'order_item_confirm_delete.html'
+    template_name = 'delete.html'
 
     def get_success_url(self):
         return reverse_lazy('orders:order_detail', kwargs={'pk': self.kwargs['pk']})
+    
+    def get_context_data(self, **kwargs):
+        object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context['object_name'] = 'Order Item ' + str(object.pk)
+        context['pattern'] = 'orders:order_detail'
+        return super().get_context_data(**kwargs)
