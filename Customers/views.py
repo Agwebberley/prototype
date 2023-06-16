@@ -47,7 +47,8 @@ class CustomerDeleteView(DeleteView):
     template_name = 'delete.html'
 
     def get_context_data(self, **kwargs):
+        object = self.get_object()
         context = super().get_context_data(**kwargs)
-        context['object_name'] = 'Customer ' + str(self.object.pk)
+        context['object_name'] = 'Customer ' + str(object.pk)
         context['pattern'] = 'customers:customer_list'
         return context
