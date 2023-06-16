@@ -10,6 +10,17 @@ class CustomerListView(ListView):
     model = Customers
     template_name = 'customers.html'
 
+    # Set model_fields to the fields of the model
+    model_fields = [field.name for field in Customers._meta.get_fields()]
+    model_fields.remove('orders')
+    patterns = {'Update': 'customers:customer_update', 'Delete': 'customers:customer_delete'}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_fields'] = self.model_fields
+        context['patterns'] = (self.patterns)
+        return context
+
 class CustomerCreateView(CreateView):
     model = Customers
     form_class = CustomerForm
@@ -17,7 +28,6 @@ class CustomerCreateView(CreateView):
 
     def form_invalid(self, form):
         return JsonResponse(form.errors, status=400)
-
 
     def get_success_url(self):
         return reverse_lazy('customers:customer_list')

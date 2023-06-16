@@ -12,8 +12,8 @@ class Customers(models.Model):
     class Meta:
         app_label = 'Customers'
     
-    def __str__(self):
-        return self.name
-    
     def get_absolute_url(self):
         return reverse('data_list')
+    
+    def __str__(self):
+        return str(self.name)

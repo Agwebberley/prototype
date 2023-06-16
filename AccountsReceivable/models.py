@@ -3,6 +3,7 @@ from django.urls import reverse
 from Orders.models import Orders
 from Customers.models import Customers
 import datetime
+from decimal import Decimal
 
 class AccountsReceivable(models.Model):
     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
@@ -48,6 +49,8 @@ class AccountsReceivableHistory(models.Model):
     def get_accounts_receivable(self):
         return self.accounts_receivable
 
+
+
 # A model for recording payments made to AccountsReceivable objects
 class AccountsReceivablePayment(models.Model):
     # The AccountsReceivable object that was paid
@@ -71,10 +74,13 @@ class AccountsReceivablePayment(models.Model):
     
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        if self.accounts_receivable.amount_paid is None:
+            self.accounts_receivable.amount_paid = Decimal('0')
         self.accounts_receivable.amount_paid += self.amount
         if self.accounts_receivable.amount_paid >= self.accounts_receivable.amount:
             self.accounts_receivable.paid = True
             self.accounts_receivable.paid_date = self.date
+            self.accounts_receivable.amount_paid = self.accounts_receivable.amount
         self.accounts_receivable.save()
 
         # Create an AccountsReceivableHistory object to record the change
@@ -86,6 +92,8 @@ class AccountsReceivablePayment(models.Model):
         )
     
     def delete(self, *args, **kwargs):
+        if self.accounts_receivable.amount_paid is None:
+            self.accounts_receivable.amount_paid = Decimal('0')
         self.accounts_receivable.amount_paid -= self.amount
         if self.accounts_receivable.amount_paid < self.accounts_receivable.amount:
             self.accounts_receivable.paid = False
