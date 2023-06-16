@@ -20,6 +20,9 @@ class CustomerListView(ListView):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields
         context['patterns'] = (self.patterns)
+        context['h1'] = 'Customers'
+        context['bpattern'] = 'customers:customer_create'
+        context['bname'] = 'Create Customer'
         return context
 
 class CustomerCreateView(CreateView):
