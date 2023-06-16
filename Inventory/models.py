@@ -62,6 +62,7 @@ class Pick(models.Model):
         super().save(*args, **kwargs)
         self.items.set(OrderItem.objects.filter(order=self.order))
         self.save()
+        
 
 class Bin(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
@@ -78,6 +79,31 @@ class Bin(models.Model):
             num_bins = Bin.objects.filter(location=self.location).count()
             self.name = f"{self.location.id}-{num_bins + 1}"
         super().save(*args, **kwargs)
+        # If there are more than 100 items in the bin, put the rest in the next bin
+        # If there is no space in any bin, create a new bin
+        if self.items.count() > 100:
+            extra = self.items.count() - 100
+            # For all of the bins in the location except the current one
+            for bin in Bin.objects.filter(location=self.location).exclude(pk=self.pk):
+                # Check if there is space in the bin
+                while bin.items.count() < 100:
+                    # If there is, move an item from the current bin to the bin with space
+                    bin.items.add(self.items.first())
+                    self.items.remove(self.items.first())
+                    extra -= 1
+                    if extra == 0:
+                        break
+                if extra == 0:
+                    break
+            # If there are still items left, create a new bin
+            if extra > 0:
+                new_bin = Bin(location=self.location)
+                new_bin.save()
+                for i in range(extra):
+                    new_bin.items.add(self.items.first())
+                    self.items.remove(self.items.first())
+
+
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
