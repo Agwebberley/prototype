@@ -62,6 +62,7 @@ class Pick(models.Model):
         super().save(*args, **kwargs)
         self.items.set(OrderItem.objects.filter(order=self.order))
         self.save()
+        print("Saved pick.")
 
         # Pull the items from the bins and update the inventory
         # Only pull items if the pick is complete and only pull from bins at the same location as the pick

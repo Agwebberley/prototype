@@ -14,9 +14,7 @@ class SNSPublisher:
 
 
 @receiver(post_save)
-@receiver(post_delete)
 def post_signal(sender, instance, **kwargs):
-    print("post_signal")
     if sender.__name__ != 'LogMessage':
         publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:CustomerLog')
         if kwargs.get('created'):
@@ -24,5 +22,13 @@ def post_signal(sender, instance, **kwargs):
         elif kwargs.get('update_fields'):
             message = f"{sender.__name__} with ID {instance.id} was updated" 
         else: 
-            message = f"{sender.__name__} with ID {instance.id} was deleted"
+            message = f"{sender.__name__} with ID {instance.id} was updated"
+        publisher.publish(message)
+
+
+@receiver(post_delete)
+def delete_signal(sender, instance, **kwargs):
+    if sender.__name__ != 'LogMessage':
+        publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:CustomerLog')
+        message = f"{sender.__name__} with ID {instance.id} was deleted"
         publisher.publish(message)

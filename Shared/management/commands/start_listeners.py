@@ -95,7 +95,22 @@ class PrototypeSQSListener(MultiSQSListener):
                 except Exception as e:
                     print(f"Order with id {message_body[2]} did not create")
                     print(e)
-            
+        elif queue_name == 'Manufacture':
+            if message[0] == 'pick' and message[1] == 'updated':
+                from Inventory.models import Pick, Inventory
+                from Items.models import Items
+                from Manufacture.models import Manufacture
+
+                # get the pick object
+                pick = Pick.objects.get(id=message[2])
+                # For each unique item in the pick, check if the item is below the reorder threshold
+                # If it is, create a Manufacture object for the item
+                for item in pick.items.all().distinct():
+                    inventory = Inventory.objects.get(item=item)
+                    if inventory.quantity < item.reorder_level:
+                        reorder_amount = item.target_inv - inventory.quantity
+                        Manufacture.objects.create(item=item, quantity=reorder_amount)
+
         else:
             raise Exception('Unknown queue name: {}'.format(queue_name))
         
