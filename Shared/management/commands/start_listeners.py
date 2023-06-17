@@ -95,6 +95,8 @@ class PrototypeSQSListener(MultiSQSListener):
                 except Exception as e:
                     print(f"Order with id {message_body[2]} did not create")
                     print(e)
+            elif message_body[0] == 'manufacture' and message_body[1] == 'created':
+                pass
         elif queue_name == 'Manufacture':
             if message[0] == 'pick' and message[1] == 'updated':
                 from Inventory.models import Pick, Inventory

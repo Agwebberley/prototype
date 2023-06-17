@@ -4,7 +4,6 @@ from .models import Manufacture
 from Shared.signals import SNSPublisher
 
 @receiver(post_save, sender=Manufacture)
-@receiver(post_delete, sender=Manufacture)
 def inventory_post(sender, instance, **kwargs):
     publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:Manufacture')
     if kwargs.get('created'):
