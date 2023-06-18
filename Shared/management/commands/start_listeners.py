@@ -96,7 +96,23 @@ class PrototypeSQSListener(MultiSQSListener):
                     print(f"Order with id {message_body[2]} did not create")
                     print(e)
             elif message_body[0] == 'manufacture' and message_body[1] == 'created':
-                pass
+                # If a manufacture object is created, create an InventoryHistory object for the item
+                # and update the quantity of the item in the Inventory object
+                # and remove the manufacture object
+                # Add a manufacturehistory object for the manufacture object
+                from Manufacture.models import Manufacture, ManufactureHistory
+                from Inventory.models import Inventory
+                from Items.models import Items
+                try:
+                    manufacture = Manufacture.objects.get(id=message_body[2])
+                    inventory = Inventory.objects.get(item=manufacture.item)
+                    inventory.quantity += manufacture.quantity
+                    inventory.save()
+                    ManufactureHistory.objects.create(manufacture=manufacture, item=manufacture.item, quantity=manufacture.quantity, type='manufacture')
+                    manufacture.delete()
+                except Exception as e:
+                    print(f"Manufacture with id {message_body[2]} did not create")
+                    print(e)
         elif queue_name == 'Manufacture':
             if message[0] == 'pick' and message[1] == 'updated':
                 from Inventory.models import Pick, Inventory
