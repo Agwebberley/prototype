@@ -14,8 +14,9 @@ class Command(BaseCommand):
         log_queue = QueueConfig('CustomerLog', eventbus, region_name='us-west-2')
         accounts_receivable_queue = QueueConfig('AccountsReceivable', eventbus, region_name='us-west-2')
         inventory_queue = QueueConfig('Inventory', eventbus, region_name='us-west-2')
+        manufacture_queue = QueueConfig('Manufacture', eventbus, region_name='us-west-2')
 
-        listener = PrototypeSQSListener([log_queue, accounts_receivable_queue, inventory_queue])
+        listener = PrototypeSQSListener([log_queue, accounts_receivable_queue, inventory_queue, manufacture_queue])
         listener.listen()
 
 class PrototypeSQSListener(MultiSQSListener):
