@@ -16,6 +16,7 @@ class ItemListView(ListView):
     model_fields.remove('inventory')
     model_fields.remove('inventoryhistory')
     model_fields.remove('bin')
+    model_fields.remove('manufacture')
 
     patterns = {'Update': 'items:item_update', 'Delete': 'items:item_delete'}
 
