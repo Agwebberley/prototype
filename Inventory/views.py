@@ -9,7 +9,7 @@ from .forms import InventoryForm, PickForm
 # Inventory
 class InventoryListView(ListView):
     model = Inventory
-    template_name = 'inventory_list.html'
+    template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in Inventory._meta.get_fields()]
@@ -25,7 +25,7 @@ class InventoryListView(ListView):
 class InventoryUpdateView(UpdateView):
     model = Inventory
     form_class = InventoryForm
-    template_name = 'inventory_form.html'
+    template_name = 'form.html'
 
     def form_invalid(self, form):
         return JsonResponse(form.errors, status=400)
@@ -46,7 +46,7 @@ class InventoryUpdateView(UpdateView):
 # InventoryHistory
 class InventoryHistoryListView(ListView):
     model = InventoryHistory
-    template_name = 'inventory_list.html'
+    template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in InventoryHistory._meta.get_fields()]
