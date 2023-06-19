@@ -7,9 +7,9 @@ from Shared.signals import SNSPublisher
 def inventory_post(sender, instance, **kwargs):
     publisher = SNSPublisher(region_name='us-west-2', topic_arn='arn:aws:sns:us-west-2:710141730058:Manufacture')
     if kwargs.get('created'):
-        message = f"Manufacture created {instance.id}"
+        message = f"manufacture created {instance.id}"
     elif kwargs.get('update_fields'):
-        message = f"Manufacture updated {instance.id}"
+        message = f"manufacture updated {instance.id}"
     else:
         return
     publisher.publish(message)
