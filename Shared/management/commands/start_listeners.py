@@ -69,7 +69,7 @@ class PrototypeSQSListener(MultiSQSListener):
             else:
                 raise Exception('Unknown message: {}'.format(message_body))
         elif queue_name == 'Inventory':
-            from Inventory.models import Inventory, InventoryHistory, Pick
+            from Inventory.models import Inventory, Pick
             from Items.models import Items
             message_json = json.loads(message.body)
             message_body = message_json['Message'].split(' ')
@@ -77,10 +77,7 @@ class PrototypeSQSListener(MultiSQSListener):
                 # create an Inventory object for the item
                 try:
                     item = Items.objects.get(id=message_body[2])
-                    Inventory.objects.create(item=item, quantity=0)
-                    # get the id of the Inventory object that was just created
-                    inventory = Inventory.objects.get(item_id=message_body[2])
-                    InventoryHistory.objects.create(inventory=inventory, item=item, quantity=0, type='adjustment')
+                    Inventory.objects.create(item=item, quantity=0, typeI="adjustment")
                 except Exception as e:
                     print(f"Item with id {message_body[2]} did not create")
                     print(e)
@@ -95,6 +92,40 @@ class PrototypeSQSListener(MultiSQSListener):
                 except Exception as e:
                     print(f"Order with id {message_body[2]} did not create")
                     print(e)
+            elif message_body[0] == 'manufacture' and message_body[1] == 'created':
+                # If a manufacture object is created, create an InventoryHistory object for the item
+                # and update the quantity of the item in the Inventory object
+                # and remove the manufacture object
+                # Add a manufacturehistory object for the manufacture object
+                from Manufacture.models import Manufacture, ManufactureHistory
+                from Inventory.models import Inventory
+                from Items.models import Items
+                try:
+                    manufacture = Manufacture.objects.get(id=message_body[2])
+                    inventory = Inventory.objects.get(item=manufacture.item)
+                    inventory.quantity += manufacture.quantity
+                    inventory.save()
+                    ManufactureHistory.objects.create(manufacture=manufacture, item=manufacture.item, quantity=manufacture.quantity, is_complete=True)
+                    manufacture.delete()
+                except Exception as e:
+                    print(f"Manufacture with id {message_body[2]} did not create")
+                    print(e)
+        elif queue_name == 'Manufacture':
+            if message[0] == 'pick' and message[1] == 'updated':
+                from Inventory.models import Pick, Inventory
+                from Items.models import Items
+                from Manufacture.models import Manufacture
+
+                # get the pick object
+                pick = Pick.objects.get(id=message[2])
+                # For each unique item in the pick, check if the item is below the reorder threshold
+                # If it is, create a Manufacture object for the item
+                for item in pick.items.all().distinct():
+                    inventory = Inventory.objects.get(item=item)
+                    if inventory.quantity < item.reorder_level:
+                        reorder_amount = item.target_inv - inventory.quantity
+                        Manufacture.objects.create(item=item, quantity=reorder_amount)
+
         else:
             raise Exception('Unknown queue name: {}'.format(queue_name))
         
