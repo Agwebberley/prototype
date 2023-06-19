@@ -14,8 +14,9 @@ class Command(BaseCommand):
         log_queue = QueueConfig('CustomerLog', eventbus, region_name='us-west-2')
         accounts_receivable_queue = QueueConfig('AccountsReceivable', eventbus, region_name='us-west-2')
         inventory_queue = QueueConfig('Inventory', eventbus, region_name='us-west-2')
+        manufacture_queue = QueueConfig('Manufacture', eventbus, region_name='us-west-2')
 
-        listener = PrototypeSQSListener([log_queue, accounts_receivable_queue, inventory_queue])
+        listener = PrototypeSQSListener([log_queue, accounts_receivable_queue, inventory_queue, manufacture_queue])
         listener.listen()
 
 class PrototypeSQSListener(MultiSQSListener):
@@ -73,6 +74,7 @@ class PrototypeSQSListener(MultiSQSListener):
             from Items.models import Items
             message_json = json.loads(message.body)
             message_body = message_json['Message'].split(' ')
+            print(message_body)
             if message_body[0] == 'item' and message_body[1] == 'created':
                 # create an Inventory object for the item
                 try:
@@ -104,8 +106,9 @@ class PrototypeSQSListener(MultiSQSListener):
                     manufacture = Manufacture.objects.get(id=message_body[2])
                     inventory = Inventory.objects.get(item=manufacture.item)
                     inventory.quantity += manufacture.quantity
+                    inventory.typeI = "shipment"
                     inventory.save()
-                    ManufactureHistory.objects.create(manufacture=manufacture, item=manufacture.item, quantity=manufacture.quantity, is_complete=True)
+                    ManufactureHistory.objects.create(manufacture=manufacture.pk, item=manufacture.item, quantity=manufacture.quantity, is_complete=True)
                     manufacture.delete()
                 except Exception as e:
                     print(f"Manufacture with id {message_body[2]} did not create")
