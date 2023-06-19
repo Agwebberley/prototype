@@ -108,7 +108,7 @@ class PrototypeSQSListener(MultiSQSListener):
                     inventory = Inventory.objects.get(item=manufacture.item)
                     inventory.quantity += manufacture.quantity
                     inventory.save()
-                    ManufactureHistory.objects.create(manufacture=manufacture, item=manufacture.item, quantity=manufacture.quantity, type='manufacture')
+                    ManufactureHistory.objects.create(manufacture=manufacture, item=manufacture.item, quantity=manufacture.quantity, is_complete=True)
                     manufacture.delete()
                 except Exception as e:
                     print(f"Manufacture with id {message_body[2]} did not create")
