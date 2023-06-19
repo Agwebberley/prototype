@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView
 from .models import Manufacture
 from .forms import ManufactureForm
 
@@ -17,11 +17,6 @@ class ManufactureList(ListView):
         return context
     
 class ManufactureCreate(CreateView):
-    model = Manufacture
-    form_class = ManufactureForm
-    template_name = 'form.html'
-
-class ManufactureUpdate(UpdateView):
     model = Manufacture
     form_class = ManufactureForm
     template_name = 'form.html'

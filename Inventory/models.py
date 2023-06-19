@@ -8,6 +8,10 @@ class Inventory(models.Model):
     item = models.OneToOneField(Items, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     last_updated = models.DateTimeField(auto_now=True)
+
+    # The type of change that was made to the inventory to be used in the InventoryHistory object
+    types = ["shipment", "order", "return", "adjustment"]
+    typeI = models.CharField(max_length=10, choices=[(x, x) for x in types], default="shipment")
     class Meta:
         app_label = 'Inventory'
     
@@ -16,6 +20,30 @@ class Inventory(models.Model):
     
     def get_absolute_url(self):
         return reverse('inventory_list')
+    
+    def save(self, *args, **kwargs):
+        # Add items to bin
+        super().save(*args, **kwargs)
+        InventoryHistory.objects.create(inventory=self, quantity=self.quantity, type=self.typeI)
+
+        if self.typeI == "shipment":
+            # Get the last InventoryHistory entry for this item
+            last_entry = InventoryHistory.objects.filter(item=self.item).order_by('-timestamp').first()
+            if last_entry:
+                self.change = self.quantity - last_entry.quantity
+
+                # Add the change into the bins
+                # Get the bin with amount of items
+                # items is a Many To Many field
+                bins = Bin.objects.filter(pk=1)
+                for bin in bins:
+                    for i in range(self.change):
+                        bin.items.add(self.item)
+                        bin.save()
+                
+
+
+
 
 class InventoryHistory(models.Model):
     inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE, editable=False)
@@ -23,7 +51,7 @@ class InventoryHistory(models.Model):
     quantity = models.IntegerField(editable=False, default=0)
     change = models.IntegerField(editable=False, default=0)
     types = ["shipment", "order", "return", "adjustment"]
-    type = models.CharField(max_length=10, choices=[(x, x) for x in types], default="shipment", editable=False)
+    typeI = models.CharField(max_length=10, choices=[(x, x) for x in types], default="shipment", editable=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     class Meta:
         app_label = 'Inventory'
