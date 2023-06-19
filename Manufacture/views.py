@@ -13,7 +13,7 @@ class ManufactureList(ListView):
         context['model_fields'] = self.model_fields
         context['h1'] = 'Manufacture'
         context['bpattern'] = 'manufacture:manufacture_create'
-        context['bname'] = 'Create Manufacture'
+        context['bname'] = 'Create Manufacturing Order'
         return context
     
 class ManufactureCreate(CreateView):

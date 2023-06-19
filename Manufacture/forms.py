@@ -1,7 +1,7 @@
 from django import forms
 from .models import Manufacture
 
-class ManufactureForm(forms.Form):
+class ManufactureForm(forms.ModelForm):
     class Meta:
         model = Manufacture
         fields = ('item', 'quantity')
