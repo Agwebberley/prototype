@@ -24,7 +24,7 @@ class Inventory(models.Model):
     def save(self, *args, **kwargs):
         # Add items to bin
         super().save(*args, **kwargs)
-        InventoryHistory.objects.create(inventory=self, quantity=self.quantity, type=self.typeI)
+        InventoryHistory.objects.create(inventory=self, quantity=self.quantity, typeI=self.typeI)
 
         if self.typeI == "shipment":
             # Get the last InventoryHistory entry for this item
