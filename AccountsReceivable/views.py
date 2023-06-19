@@ -6,7 +6,21 @@ from .models import AccountsReceivable, AccountsReceivableHistory, AccountsRecei
 # Accounts Receivable
 class AccountsReceivableListView(ListView):
     model = AccountsReceivable
-    template_name = 'accounts_receivable.html'
+    template_name = 'listview.html'
+
+    # Set model_fields to the fields of the model
+    model_fields = [field.name for field in AccountsReceivable._meta.get_fields()]
+    model_fields.remove('accountsreceivablehistory')
+    model_fields.remove('accountsreceivablepayment')
+
+    patterns = {'Toggle Paid': 'accounts_receivable:toggle_paid', 'Details': 'accounts_receivable:accounts_receivable_detail', 'Make Payment': 'accounts_receivable:make_payment'}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model_fields'] = self.model_fields
+        context['patterns'] = (self.patterns)
+        context['h1'] = 'Accounts Receivable'
+        return context
 
 class AccountTogglePaidView(View):
     def post(self, request, *args, **kwargs):
