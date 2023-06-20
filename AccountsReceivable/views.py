@@ -15,7 +15,7 @@ class AccountsReceivableListView(ListView):
     model_fields.remove('accountsreceivablehistory')
     model_fields.remove('accountsreceivablepayment')
 
-    patterns = {'Toggle Paid': 'accounts_receivable:toggle_paid', 'Details': 'accounts_receivable:accounts_receivable_detail', 'Make Payment': 'accounts_receivable:make_payment'}
+    patterns = {'Toggle Paid': 'accounts_receivable:toggle_paid', 'Details': 'accounts_receivable:account_details', 'Make Payment': 'accounts_receivable:make_payment'}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
