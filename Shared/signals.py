@@ -4,12 +4,20 @@ import boto3
 
 # The SNSPublisher class is a Python class that initializes an SNS client and publishes a message to a
 # specified topic.
+from django.core.cache import cache
+import time
+
 class SNSPublisher:
     def __init__(self, region_name, topic_arn):
         self.sns = boto3.client('sns', region_name=region_name)
         self.topic_arn = topic_arn
 
     def publish(self, message):
+        # Check if the message has been sent within the last minute
+        if cache.get(message):
+            return
+        # If not, add the message to the cache with a timestamp
+        cache.set(message, time.time(), 60)
         self.sns.publish(TopicArn=self.topic_arn, Message=message)
 
 
