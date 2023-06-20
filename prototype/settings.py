@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'Orders',
     'Items',
     'Inventory',
+    'Manufacture',
     'AccountsReceivable',
     'django.contrib.admin',
     'django.contrib.auth',
