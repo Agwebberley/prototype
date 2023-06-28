@@ -34,6 +34,7 @@ class Command(BaseCommand):
 
             # Step 1.1.2: Save EC2 keypair file
             import os
+            print(ec2_keypairs)
             ec2_keypair_file = open(f"{ec2_keypair_name}.pem", "w")
             ec2_keypair_file.write(ec2_keypairs['KeyMaterial'])
             ec2_keypair_file.close()
@@ -217,3 +218,4 @@ class Command(BaseCommand):
         
         with Connection(**CONNECTION_PROPERTIES) as c:
             over_ssh(c)
+

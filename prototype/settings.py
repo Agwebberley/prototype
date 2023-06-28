@@ -28,10 +28,15 @@ SECRET_KEY = 'django-insecure-oe+2^x^vqdl9d5y7pd24dn^&t7wiygo9l_v^&=q_x+b3k609&e
 DEBUG = True
 
 # Get ALLOWED_HOSTS from environment variable
-allowed = str(os.environ.get("ALLOWED_HOSTS"))
+allowed = eval(str(os.environ.get("ALLOWED_HOSTS")))
 # Turn ALLOWED_HOSTS into a list
-ALLOWED_HOSTS = eval(allowed)
-CSRF_TRUSTED_ORIGINS = eval(allowed)
+
+# If ALLOWED_HOSTS is empty, set it to localhost
+if not allowed:
+    allowed = ['http://localhost']
+
+ALLOWED_HOSTS = allowed
+CSRF_TRUSTED_ORIGINS = allowed
 
 
 # Application definition
