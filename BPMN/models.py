@@ -1,3 +1,11 @@
 from django.db import models
+from viewflow import jsonstore
+from viewflow.workflow.models import Process
 
-# Create your models here.
+
+class HelloWorldProcess(Process):
+    text = jsonstore.CharField(max_length=150)
+    approved = jsonstore.BooleanField(default=False)
+
+    class Meta:
+        proxy = True

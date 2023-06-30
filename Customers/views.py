@@ -1,6 +1,5 @@
 # This is a set of Django views for creating, updating, and deleting instances of a Customer model, with a
 # list view to display all instances.
-from typing import Any
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView

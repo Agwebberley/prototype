@@ -33,10 +33,11 @@ allowed = eval(str(os.environ.get("ALLOWED_HOSTS")))
 
 # If ALLOWED_HOSTS is empty, set it to localhost
 if not allowed:
+    print(allowed)
     allowed = ['http://localhost']
 
-ALLOWED_HOSTS = allowed
-CSRF_TRUSTED_ORIGINS = allowed
+ALLOWED_HOSTS = ['localhost']
+CSRF_TRUSTED_ORIGINS = ['http://localhost']
 
 
 # Application definition
@@ -49,8 +50,9 @@ INSTALLED_APPS = [
     'Inventory',
     'Manufacture',
     'AccountsReceivable',
+    'BPMN',
     'viewflow',
-    'viewflow.frontend',
+    'viewflow.workflow',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -26,4 +26,5 @@ urlpatterns = [
     path("inventory/", include("Inventory.urls"), name="inventory"),
     path("accounts_receivable/", include("AccountsReceivable.urls"), name="accounts_receivable"),
     path("manufacture/", include("Manufacture.urls"), name="manufacture"),
+    path("bpmn/", include("BPMN.urls"), name="bpmn"),
 ]
