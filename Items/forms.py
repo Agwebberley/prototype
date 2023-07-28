@@ -12,5 +12,5 @@ class itemsForm(forms.ModelForm):
     class Meta:
         from .models import items
         model = items
-        fields = ('id', 'name', 'description', 'price', 'target_inv', 'current_inv', 'reorder_level')
+        fields = ('name', 'description', 'price', 'target_inv', 'current_inv', 'reorder_level')
 

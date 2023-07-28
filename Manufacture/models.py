@@ -5,10 +5,11 @@ from django.utils import timezone
 
 
 class manufacture(models.Model):
-    id = models.IntegerField(max_length=64, )
     quantity = models.IntegerField(max_length=32, )
     date = models.DateField()
     item_id = models.IntegerField(max_length=64, )
+    items = models.ForeignKey('Items_items', on_delete=models.CASCADE, related_name='items')
+    manufacturehistory = models.ForeignKey('Manufacture_manufacturehistory', on_delete=models.CASCADE, related_name='manufacturehistory')
 
     class Meta:
         app_label = 'Manufacture'
@@ -22,7 +23,6 @@ class manufacture(models.Model):
 
 
 class manufacturehistory(models.Model):
-    id = models.IntegerField(max_length=64, )
     manufacture = models.IntegerField(max_length=32, )
     item = models.IntegerField(max_length=32, )
     quantity = models.IntegerField(max_length=32, )

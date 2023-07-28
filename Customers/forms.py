@@ -12,5 +12,5 @@ class customersForm(forms.ModelForm):
     class Meta:
         from .models import customers
         model = customers
-        fields = ('id', 'name', 'billing_address', 'shipping_address', 'phone', 'email')
+        fields = ('name', 'billing_address', 'shipping_address', 'phone', 'email')
 

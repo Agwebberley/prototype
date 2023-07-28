@@ -3,7 +3,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from .models import items
-from .forms import itemForm
+from .forms import itemsForm
 
 # items
 class ItemListView(ListView):
@@ -33,7 +33,7 @@ class ItemListView(ListView):
 
 class ItemCreateView(CreateView):
     model = items
-    form_class = itemForm
+    form_class = itemsForm
     template_name = 'form.html'
 
     def form_invalid(self, form):
@@ -44,7 +44,7 @@ class ItemCreateView(CreateView):
 
 class ItemUpdateView(UpdateView):
     model = items
-    form_class = itemForm
+    form_class = itemsForm
     template_name = 'form.html'
     success_url = reverse_lazy('items:item_list')
 

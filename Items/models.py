@@ -5,7 +5,6 @@ from django.utils import timezone
 
 
 class items(models.Model):
-    id = models.IntegerField(max_length=64, )
     name = models.CharField(max_length=200, )
     description = models.CharField(max_length=200, )
     price = models.DecimalField(max_length=10, decimal_places=2, )

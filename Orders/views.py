@@ -4,7 +4,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from .models import orders, orderitem
-from .forms import orderForm, orderitemForm
+from .forms import ordersForm, orderitemForm
 
 # Orders
 class OrderListView(ListView):
@@ -32,7 +32,7 @@ class OrderListView(ListView):
 
 class OrderCreateView(CreateView):
     model = orders
-    form_class = orderForm
+    form_class = ordersForm
     template_name = 'order_form.html'
 
     def form_invalid(self, form):
@@ -43,7 +43,7 @@ class OrderCreateView(CreateView):
 
 class OrderUpdateView(UpdateView):
     model = orders
-    form_class = orderForm
+    form_class = ordersForm
     template_name = 'form.html'
 
 class OrderDeleteView(DeleteView):
