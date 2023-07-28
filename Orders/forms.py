@@ -12,11 +12,11 @@ class orderitemForm(forms.ModelForm):
     class Meta:
         from .models import orderitem
         model = orderitem
-        fields = ('quantity', 'item_id', 'order_id', 'items', 'orders')
+        fields = ('quantity', 'item_id', 'order_id')
 
 class ordersForm(forms.ModelForm):
     class Meta:
         from .models import orders
         model = orders
-        fields = ('ordered_date', 'updated_date', 'customer_id', 'customers')
+        fields = ('ordered_date', 'updated_date', 'customer_id')
 

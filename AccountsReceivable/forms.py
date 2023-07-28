@@ -12,17 +12,17 @@ class accountsreceivableForm(forms.ModelForm):
     class Meta:
         from .models import accountsreceivable
         model = accountsreceivable
-        fields = ('amount', 'due_date', 'paid', 'paid_date', 'amount_paid', 'order_id', 'orders')
+        fields = ('amount', 'due_date', 'paid', 'paid_date', 'amount_paid', 'order_id')
 
 class accountsreceivablehistoryForm(forms.ModelForm):
     class Meta:
         from .models import accountsreceivablehistory
         model = accountsreceivablehistory
-        fields = ('field', 'old_value', 'new_value', 'date', 'accounts_receivable_id', 'accountsreceivable')
+        fields = ('field', 'old_value', 'new_value', 'date', 'accounts_receivable_id')
 
 class accountsreceivablepaymentForm(forms.ModelForm):
     class Meta:
         from .models import accountsreceivablepayment
         model = accountsreceivablepayment
-        fields = ('amount', 'date', 'accounts_receivable_id', 'accountsreceivable')
+        fields = ('amount', 'date', 'accounts_receivable_id')
 
