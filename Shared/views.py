@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.views.generic import ListView, View
-from .models import LogMessage
+from .models import logmessage
 
 # Create your views here.
 class LogView(ListView):
-    model = LogMessage
+    model = logmessage
     template_name = 'log.html'
 
     def get_context_customer(self, **kwargs):

@@ -4,16 +4,17 @@ from typing import Any
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from .models import Customers
-from .forms import CustomerForm
+from .models import customers
+from .forms import customersForm
 
 class CustomerListView(ListView):
-    model = Customers
+    model = customers
     template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
-    model_fields = [field.name for field in Customers._meta.get_fields()]
-    model_fields.remove('orders')
+    model_fields = [field.name for field in customers._meta.get_fields()]
+    try: model_fields.remove('orders')
+    except: pass
     patterns = {'Update': 'customers:customer_update', 'Delete': 'customers:customer_delete'}
 
     def get_context_data(self, **kwargs):
@@ -26,8 +27,8 @@ class CustomerListView(ListView):
         return context
 
 class CustomerCreateView(CreateView):
-    model = Customers
-    form_class = CustomerForm
+    model = customers
+    form_class = customersForm
     template_name = 'form.html'
 
     def form_invalid(self, form):
@@ -37,12 +38,12 @@ class CustomerCreateView(CreateView):
         return reverse_lazy('customers:customer_list')
 
 class CustomerUpdateView(UpdateView):
-    model = Customers
-    form_class = CustomerForm
+    model = customers
+    form_class = customersForm
     template_name = 'form.html'
 
 class CustomerDeleteView(DeleteView):
-    model = Customers
+    model = customers
     success_url = reverse_lazy('customers:customer_list')
     template_name = 'delete.html'
 

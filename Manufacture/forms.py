@@ -1,11 +1,22 @@
-from django import forms
-from .models import Manufacture
 
-class ManufactureForm(forms.ModelForm):
+from django import forms
+
+class BaseForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'w-half px-3 py-2 mb-4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none sm:text-sm text-black'
+
+
+class manufactureForm(forms.ModelForm):
     class Meta:
-        model = Manufacture
-        fields = ('item', 'quantity')
-        widgets = {
-            'item': forms.Select(attrs={'class': 'w-half px-3 py-2 mb-4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none sm:text-sm text-black'}),
-            'quantity': forms.NumberInput(attrs={'class': 'w-half px-3 py-2 mb-4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none sm:text-sm text-black'}),
-        }
+        from .models import manufacture
+        model = manufacture
+        fields = ('id', 'quantity', 'date', 'item_id', 'Manufacture_manufacture_item_id_837185b2_fk_Items_items_id', 'fk_Manufacture_manufacture_Manufacture_manufacturehistory_1')
+
+class manufacturehistoryForm(forms.ModelForm):
+    class Meta:
+        from .models import manufacturehistory
+        model = manufacturehistory
+        fields = ('id', 'manufacture', 'item', 'quantity', 'timestamp', 'is_complete')
+

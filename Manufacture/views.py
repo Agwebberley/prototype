@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView
-from .models import Manufacture
-from .forms import ManufactureForm
+from .models import manufacture
+from .forms import manufactureForm
 
 class ManufactureList(ListView):
-    model = Manufacture
+    model = manufacture
     template_name = 'listview.html'
-    model_fields = [field.name for field in Manufacture._meta.get_fields()]
+    model_fields = [field.name for field in manufacture._meta.get_fields()]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -17,6 +17,6 @@ class ManufactureList(ListView):
         return context
     
 class ManufactureCreate(CreateView):
-    model = Manufacture
-    form_class = ManufactureForm
+    model = manufacture
+    form_class = manufactureForm
     template_name = 'form.html'

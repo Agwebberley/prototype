@@ -3,18 +3,20 @@ from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
-from .models import Inventory, InventoryHistory, Pick, Bin, Location
-from .forms import InventoryForm, PickForm
+from .models import inventory, inventoryhistory, pick, bin, location
+from .forms import inventoryForm, pickForm
 
 # Inventory
 class InventoryListView(ListView):
-    model = Inventory
+    model = inventory
     template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
-    model_fields = [field.name for field in Inventory._meta.get_fields()]
-    model_fields.remove('inventoryhistory')
-    model_fields.remove('typeI')
+    model_fields = [field.name for field in inventory._meta.get_fields()]
+    try: 
+        model_fields.remove('inventoryhistory')
+        model_fields.remove('typeI')
+    except: pass
     patterns = {'Update': 'inventory:inventory_update', 'History': 'inventory:inventoryhistory_list'}
 
     def get_context_data(self, **kwargs):
@@ -24,8 +26,8 @@ class InventoryListView(ListView):
         return context
 
 class InventoryUpdateView(UpdateView):
-    model = Inventory
-    form_class = InventoryForm
+    model = inventory
+    form_class = inventoryForm
     template_name = 'form.html'
 
     def form_invalid(self, form):
@@ -39,13 +41,15 @@ class InventoryUpdateView(UpdateView):
 
 # InventoryHistory
 class InventoryHistoryListView(ListView):
-    model = InventoryHistory
+    model = inventoryhistory
     template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
-    model_fields = [field.name for field in InventoryHistory._meta.get_fields()]
-    model_fields.remove('inventory')
-    model_fields.remove('item')
+    model_fields = [field.name for field in inventoryhistory._meta.get_fields()]
+    try:
+        model_fields.remove('inventory')
+        model_fields.remove('item')
+    except: pass
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -54,18 +58,18 @@ class InventoryHistoryListView(ListView):
 
     # Limit to InventoryHistory for a specific item
     def get_queryset(self):
-        Inventory = self.kwargs['pk']
-        return InventoryHistory.objects.filter(inventory=Inventory)
+        inventory = self.kwargs['pk']
+        return inventoryhistory.objects.filter(inventory=inventory)
     
 # Pick
 class PickListView(ListView):
-    model = Pick
+    model = pick
     template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
-    model_fields = [field.name for field in Pick._meta.get_fields()]
-    model_fields.remove('items')
-
+    model_fields = [field.name for field in pick._meta.get_fields()]
+    try: model_fields.remove('items')
+    except: pass
     # Action Button Url Patterns
     patterns = {'Pick Order': 'inventory:pick_update'}   
 
@@ -77,8 +81,8 @@ class PickListView(ListView):
         return context
 
 class PickUpdateView(UpdateView):
-    model = Pick
-    form_class = PickForm
+    model = pick
+    form_class = pickForm
     template_name = 'form.html'
 
     def form_invalid(self, form):
@@ -89,13 +93,13 @@ class PickUpdateView(UpdateView):
 
 # Bin
 class BinListView(ListView):
-    model = Bin
+    model = bin
     template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
-    model_fields = [field.name for field in Bin._meta.get_fields()]
-    model_fields.remove('items')
-
+    model_fields = [field.name for field in bin._meta.get_fields()]
+    try: model_fields.remove('items')
+    except: pass
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields

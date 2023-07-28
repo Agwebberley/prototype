@@ -1,30 +1,22 @@
+
 from django import forms
-from .models import Orders, OrderItem
-from Customers.models import Customers
-from Items.models import Items
 
-class OrderForm(forms.ModelForm):
-    customer = forms.ModelChoiceField(queryset=Customers.objects.all().order_by('name'))
-    
+class BaseForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'w-half px-3 py-2 mb-4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none sm:text-sm text-black'
+
+
+class orderitemForm(forms.ModelForm):
     class Meta:
-        model = Orders
-        fields = ('customer',)
+        from .models import orderitem
+        model = orderitem
+        fields = ('id', 'quantity', 'item_id', 'order_id', 'Orders_orderitem_item_id_ac00d823_fk_Items_items_id', 'Orders_orderitem_order_id_3570cd78_fk_Orders_orders_id')
 
-        widgets = {
-            'customer': forms.Select(attrs={'class': 'w-half px-3 py-2 mb-4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none sm:text-sm text-black'})
-        }
-    
-
-class OrderItemForm(forms.ModelForm):
-    item = forms.ModelChoiceField(queryset=Items.objects.all().order_by('name'))
-    
+class ordersForm(forms.ModelForm):
     class Meta:
-        model = OrderItem
-        fields = ('item', 'quantity')
-
-        widgets = {
-            'item': forms.Select(attrs={'class': 'w-half px-3 py-2 mb-4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none sm:text-sm text-black'}),
-            'quantity': forms.NumberInput(attrs={'class': 'w-half px-3 py-2 mb-4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none sm:text-sm text-black'})
-        }
-
+        from .models import orders
+        model = orders
+        fields = ('id', 'ordered_date', 'updated_date', 'customer_id', 'Orders_orders_customer_id_dea32023_fk_Customers_customers_id')
 

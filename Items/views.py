@@ -2,22 +2,24 @@ from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
-from .models import Items
-from .forms import ItemForm
+from .models import items
+from .forms import itemForm
 
-# Items
+# items
 class ItemListView(ListView):
-    model = Items
+    model = items
     template_name = 'listview.html'
 
     # Set model_fields to the fields of the model
-    model_fields = [field.name for field in Items._meta.get_fields()]
-    model_fields.remove('orderitem')
-    model_fields.remove('inventory')
-    model_fields.remove('inventoryhistory')
-    model_fields.remove('bin')
-    model_fields.remove('manufacture')
-
+    model_fields = [field.name for field in items._meta.get_fields()]
+    try: 
+        model_fields.remove('orderitem')
+        model_fields.remove('inventory')
+        model_fields.remove('inventoryhistory')
+        model_fields.remove('bin')
+        model_fields.remove('manufacture')
+    except: pass
+    
     patterns = {'Update': 'items:item_update', 'Delete': 'items:item_delete'}
 
     def get_context_data(self, **kwargs):
@@ -30,8 +32,8 @@ class ItemListView(ListView):
         return context
 
 class ItemCreateView(CreateView):
-    model = Items
-    form_class = ItemForm
+    model = items
+    form_class = itemForm
     template_name = 'form.html'
 
     def form_invalid(self, form):
@@ -41,13 +43,13 @@ class ItemCreateView(CreateView):
         return reverse_lazy('items:item_list')
 
 class ItemUpdateView(UpdateView):
-    model = Items
-    form_class = ItemForm
+    model = items
+    form_class = itemForm
     template_name = 'form.html'
     success_url = reverse_lazy('items:item_list')
 
 class ItemDeleteView(DeleteView):
-    model = Items
+    model = items
     success_url = reverse_lazy('items:item_list')
     template_name = 'delete.html'
 
