@@ -9,7 +9,7 @@ from Customers.models import customers
 class orders(models.Model):
     ordered_date = models.DateTimeField(max_length=6, )
     updated_date = models.DateTimeField(max_length=6, )
-    customers = models.ForeignKey(customers, on_delete=models.CASCADE, related_name='customers')
+    customers = models.ForeignKey(customers, on_delete=models.CASCADE, related_name="orders")
 
     class Meta:
         app_label = 'Orders'
@@ -23,9 +23,9 @@ class orders(models.Model):
 
 
 class orderitem(models.Model):
-    quantity = models.IntegerField(max_length=32, )
-    items = models.ForeignKey(items, on_delete=models.CASCADE, related_name='items')
-    orders = models.ForeignKey(orders, on_delete=models.CASCADE, related_name='orders')
+    quantity = models.IntegerField()
+    items = models.ForeignKey(items, on_delete=models.CASCADE, related_name="orderitem")
+    orders = models.ForeignKey(orders, on_delete=models.CASCADE, related_name="_orderitem")
 
     class Meta:
         app_label = 'Orders'

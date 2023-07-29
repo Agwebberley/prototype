@@ -9,7 +9,7 @@ from Orders.models import orders
 from Orders.models import orderitem
 class location(models.Model):
     name = models.CharField(max_length=100, )
-    amount_of_bins = models.IntegerField(max_length=32, )
+    amount_of_bins = models.IntegerField(null=True, blank=True)
 
     class Meta:
         app_label = 'Inventory'
@@ -23,8 +23,8 @@ class location(models.Model):
 
 
 class bin(models.Model):
-    name = models.CharField(max_length=100, )
-    location = models.ForeignKey(location, on_delete=models.CASCADE, related_name='location')
+    name = models.CharField(max_length=100, null=True, blank=True)
+    location = models.ForeignKey(location, on_delete=models.CASCADE, related_name="_bin")
 
     class Meta:
         app_label = 'Inventory'
@@ -38,8 +38,8 @@ class bin(models.Model):
 
 
 class bin_items(models.Model):
-    bin = models.ForeignKey(bin, on_delete=models.CASCADE, related_name='bin')
-    items = models.ForeignKey(items, on_delete=models.CASCADE, related_name='items')
+    bin = models.ForeignKey(bin, on_delete=models.CASCADE, related_name="_bin_items")
+    items = models.ForeignKey(items, on_delete=models.CASCADE, related_name="bin_items")
 
     class Meta:
         app_label = 'Inventory'
@@ -53,10 +53,10 @@ class bin_items(models.Model):
 
 
 class inventory(models.Model):
-    quantity = models.IntegerField(max_length=32, )
+    quantity = models.IntegerField()
     last_updated = models.DateTimeField(max_length=6, )
     typeI = models.CharField(max_length=10, )
-    items = models.OneToOneField(items, on_delete=models.CASCADE, related_name='items')
+    items = models.OneToOneField(items, on_delete=models.CASCADE, related_name="inventory")
 
     class Meta:
         app_label = 'Inventory'
@@ -70,12 +70,12 @@ class inventory(models.Model):
 
 
 class inventoryhistory(models.Model):
-    quantity = models.IntegerField(max_length=32, )
-    change = models.IntegerField(max_length=32, )
+    quantity = models.IntegerField()
+    change = models.IntegerField()
     typeI = models.CharField(max_length=10, )
     timestamp = models.DateTimeField(max_length=6, )
-    inventory = models.ForeignKey(inventory, on_delete=models.CASCADE, related_name='inventory')
-    items = models.ForeignKey(items, on_delete=models.CASCADE, related_name='items')
+    inventory = models.ForeignKey(inventory, on_delete=models.CASCADE, related_name="_inventoryhistory")
+    items = models.ForeignKey(items, on_delete=models.CASCADE, related_name="inventoryhistory")
 
     class Meta:
         app_label = 'Inventory'
@@ -90,8 +90,8 @@ class inventoryhistory(models.Model):
 
 class pick(models.Model):
     is_complete = models.BooleanField()
-    location = models.ForeignKey(location, on_delete=models.CASCADE, related_name='location')
-    orders = models.OneToOneField(orders, on_delete=models.CASCADE, related_name='orders')
+    location = models.ForeignKey(location, on_delete=models.CASCADE, related_name="_pick")
+    orders = models.OneToOneField(orders, on_delete=models.CASCADE, related_name="pick")
 
     class Meta:
         app_label = 'Inventory'
@@ -105,8 +105,8 @@ class pick(models.Model):
 
 
 class pick_items(models.Model):
-    orderitem = models.ForeignKey(orderitem, on_delete=models.CASCADE, related_name='orderitem')
-    pick = models.ForeignKey(pick, on_delete=models.CASCADE, related_name='pick')
+    orderitem = models.ForeignKey(orderitem, on_delete=models.CASCADE, related_name="pick_items")
+    pick = models.ForeignKey(pick, on_delete=models.CASCADE, related_name="_pick_items")
 
     class Meta:
         app_label = 'Inventory'

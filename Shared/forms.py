@@ -12,5 +12,5 @@ class logmessageForm(forms.ModelForm):
     class Meta:
         from .models import logmessage
         model = logmessage
-        fields = ('message', 'created_at')
+        fields = ('message', 'created_at', )
 

@@ -7,10 +7,10 @@ from django.utils import timezone
 class items(models.Model):
     name = models.CharField(max_length=200, )
     description = models.CharField(max_length=200, )
-    price = models.DecimalField(max_length=10, decimal_places=2, )
-    target_inv = models.IntegerField(max_length=32, )
-    current_inv = models.IntegerField(max_length=32, )
-    reorder_level = models.IntegerField(max_length=32, )
+    price = models.DecimalField(max_digits=10, decimal_places=2, )
+    target_inv = models.IntegerField()
+    current_inv = models.IntegerField()
+    reorder_level = models.IntegerField()
 
     class Meta:
         app_label = 'Items'
