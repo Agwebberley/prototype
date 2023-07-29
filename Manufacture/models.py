@@ -4,10 +4,13 @@ from django.urls import reverse
 from django.utils import timezone
 
 
-class manufacture(models.Model):
+from Items.models import items
+class manufacturehistory(models.Model):
+    manufacture = models.IntegerField(max_length=32, )
+    item = models.IntegerField(max_length=32, )
     quantity = models.IntegerField(max_length=32, )
-    date = models.DateField()
-    item_id = models.IntegerField(max_length=64, )
+    timestamp = models.DateTimeField(max_length=6, )
+    is_complete = models.BooleanField()
 
     class Meta:
         app_label = 'Manufacture'
@@ -20,12 +23,11 @@ class manufacture(models.Model):
 
 
 
-class manufacturehistory(models.Model):
-    manufacture = models.IntegerField(max_length=32, )
-    item = models.IntegerField(max_length=32, )
+class manufacture(models.Model):
     quantity = models.IntegerField(max_length=32, )
-    timestamp = models.DateTimeField(max_length=6, )
-    is_complete = models.BooleanField()
+    date = models.DateField()
+    items = models.ForeignKey(items, on_delete=models.CASCADE, related_name='items')
+    manufacturehistory = models.ForeignKey(manufacturehistory, on_delete=models.CASCADE, related_name='manufacturehistory')
 
     class Meta:
         app_label = 'Manufacture'

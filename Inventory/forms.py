@@ -12,25 +12,25 @@ class binForm(forms.ModelForm):
     class Meta:
         from .models import bin
         model = bin
-        fields = ('name', 'location_id')
+        fields = ('name', 'location')
 
 class bin_itemsForm(forms.ModelForm):
     class Meta:
         from .models import bin_items
         model = bin_items
-        fields = ('bin_id', 'items_id')
+        fields = ('bin', 'items')
 
 class inventoryForm(forms.ModelForm):
     class Meta:
         from .models import inventory
         model = inventory
-        fields = ('quantity', 'last_updated', 'typeI', 'item_id')
+        fields = ('quantity', 'last_updated', 'typeI', 'items')
 
 class inventoryhistoryForm(forms.ModelForm):
     class Meta:
         from .models import inventoryhistory
         model = inventoryhistory
-        fields = ('quantity', 'change', 'typeI', 'timestamp', 'inventory_id', 'item_id')
+        fields = ('quantity', 'change', 'typeI', 'timestamp', 'inventory', 'items')
 
 class locationForm(forms.ModelForm):
     class Meta:
@@ -42,11 +42,11 @@ class pickForm(forms.ModelForm):
     class Meta:
         from .models import pick
         model = pick
-        fields = ('is_complete', 'location_id', 'order_id')
+        fields = ('is_complete', 'location', 'orders')
 
 class pick_itemsForm(forms.ModelForm):
     class Meta:
         from .models import pick_items
         model = pick_items
-        fields = ('pick_id', 'orderitem_id')
+        fields = ('orderitem', 'pick')
 

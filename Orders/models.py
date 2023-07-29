@@ -4,10 +4,12 @@ from django.urls import reverse
 from django.utils import timezone
 
 
-class orderitem(models.Model):
-    quantity = models.IntegerField(max_length=32, )
-    item_id = models.IntegerField(max_length=64, )
-    order_id = models.IntegerField(max_length=64, )
+from Items.models import items
+from Customers.models import customers
+class orders(models.Model):
+    ordered_date = models.DateTimeField(max_length=6, )
+    updated_date = models.DateTimeField(max_length=6, )
+    customers = models.ForeignKey(customers, on_delete=models.CASCADE, related_name='customers')
 
     class Meta:
         app_label = 'Orders'
@@ -20,10 +22,10 @@ class orderitem(models.Model):
 
 
 
-class orders(models.Model):
-    ordered_date = models.DateTimeField(max_length=6, )
-    updated_date = models.DateTimeField(max_length=6, )
-    customer_id = models.IntegerField(max_length=64, )
+class orderitem(models.Model):
+    quantity = models.IntegerField(max_length=32, )
+    items = models.ForeignKey(items, on_delete=models.CASCADE, related_name='items')
+    orders = models.ForeignKey(orders, on_delete=models.CASCADE, related_name='orders')
 
     class Meta:
         app_label = 'Orders'

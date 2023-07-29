@@ -4,13 +4,14 @@ from django.urls import reverse
 from django.utils import timezone
 
 
+from Orders.models import orders
 class accountsreceivable(models.Model):
     amount = models.DecimalField(max_length=10, decimal_places=2, )
     due_date = models.DateField()
     paid = models.BooleanField()
     paid_date = models.DateField()
     amount_paid = models.DecimalField(max_length=10, decimal_places=2, )
-    order_id = models.IntegerField(max_length=64, )
+    orders = models.ForeignKey(orders, on_delete=models.CASCADE, related_name='orders')
 
     class Meta:
         app_label = 'AccountsReceivable'
@@ -28,7 +29,7 @@ class accountsreceivablehistory(models.Model):
     old_value = models.CharField(max_length=100, )
     new_value = models.CharField(max_length=100, )
     date = models.DateTimeField(max_length=6, )
-    accounts_receivable_id = models.IntegerField(max_length=64, )
+    accountsreceivable = models.ForeignKey(accountsreceivable, on_delete=models.CASCADE, related_name='accountsreceivable')
 
     class Meta:
         app_label = 'AccountsReceivable'
@@ -44,7 +45,7 @@ class accountsreceivablehistory(models.Model):
 class accountsreceivablepayment(models.Model):
     amount = models.DecimalField(max_length=10, decimal_places=2, )
     date = models.DateField()
-    accounts_receivable_id = models.IntegerField(max_length=64, )
+    accountsreceivable = models.ForeignKey(accountsreceivable, on_delete=models.CASCADE, related_name='accountsreceivable')
 
     class Meta:
         app_label = 'AccountsReceivable'
