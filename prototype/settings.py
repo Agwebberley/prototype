@@ -35,7 +35,7 @@ allowed = eval(str(os.environ.get("ALLOWED_HOSTS")))
 if not allowed:
     allowed = ['http://localhost']
 
-ALLOWED_HOSTS = allowed
+ALLOWED_HOSTS = ['localhost']
 CSRF_TRUSTED_ORIGINS = allowed
 
 
