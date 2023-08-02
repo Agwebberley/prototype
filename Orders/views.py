@@ -33,7 +33,7 @@ class OrderListView(ListView):
 class OrderCreateView(CreateView):
     model = orders
     form_class = ordersForm
-    template_name = 'order_form.html'
+    template_name = 'form.html'
 
     def form_invalid(self, form):
         return JsonResponse(form.errors, status=400)
