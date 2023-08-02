@@ -2,6 +2,20 @@
 {% block content %}
 {% load filters %}
 
+<!-- Overide the textboxes to always have black text -->
+<style>
+    input {
+        color: black;
+    }
+    select {
+        color: black;
+    }
+    textarea {
+        color: black;
+    }
+</style>
+
+
 <div class="bg-white dark:bg-gray-900 w-4/5 text-black dark:text-white">
     <form class="p-6 flowbite container mx-auto px-16 grid gap-4 grid-cols-2 grid-rows-auto" method="post">
         {% csrf_token %}

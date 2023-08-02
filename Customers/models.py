@@ -15,7 +15,7 @@ class customers(models.Model):
         app_label = 'Customers'
 
     def __str__(self):
-        return str(self.pk)
+        return str(self.name)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

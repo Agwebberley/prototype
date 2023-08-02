@@ -18,5 +18,5 @@ class ordersForm(forms.ModelForm):
     class Meta:
         from .models import orders
         model = orders
-        fields = ('ordered_date', 'updated_date', 'customers', )
+        fields = ('customers', )
 
