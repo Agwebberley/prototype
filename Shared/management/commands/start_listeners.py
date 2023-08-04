@@ -20,11 +20,11 @@ class PrototypeSQSListener(MultiSQSListener):
     def handle_message(self, queue_name, bus_name, priority, message):
         print("Handling message from queue: " + queue_name)
         if queue_name == 'CustomerLog':
-                from Shared.models import LogMessage
+                from Shared.models import logmessage
                 print("Received message from CustomerLog queue")
                 # message['Body'] is a JSON string, parse it to a dictionary
                 message_json = json.loads(message.body)
-                LogMessage.objects.create(message=message_json['Message'])
+                logmessage.objects.create(message=message_json['Message'])
         message.delete()
 
 
