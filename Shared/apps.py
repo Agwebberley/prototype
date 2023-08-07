@@ -4,4 +4,6 @@ from django.apps import AppConfig
 class SharedConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'Shared'
-    import Shared.signals
+
+    def ready(self):
+        import Shared.signals

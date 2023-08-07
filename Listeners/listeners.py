@@ -46,19 +46,19 @@ class ManufactureListener(BaseSQSListener):
     def handle_message(self, message):
         message = message["Body"].split(" ")
         if message[0] == 'pick' and message[1] == 'updated':
-                from Inventory.models import Pick, Inventory
-                from Items.models import Items
-                from Manufacture.models import Manufacture
+                from Inventory.models import pick, inventory
+                from Items.models import items
+                from Manufacture.models import manufacture
 
                 # get the pick object
-                pick = Pick.objects.get(id=message[2])
+                pick = pick.objects.get(id=message[2])
                 # For each unique item in the pick, check if the item is below the reorder threshold
                 # If it is, create a Manufacture object for the item
                 for item in pick.items.all().distinct():
-                    inventory = Inventory.objects.get(item=item)
+                    inventory = inventory.objects.get(item=item)
                     if inventory.quantity < item.reorder_level:
                         reorder_amount = item.target_inv - inventory.quantity
-                        Manufacture.objects.create(item=item, quantity=reorder_amount)
+                        manufacture.objects.create(item=item, quantity=reorder_amount)
 
 class InventoryListener(BaseSQSListener):
     def __init__(self, queue_url):
@@ -71,16 +71,16 @@ class InventoryListener(BaseSQSListener):
         self.conn.commit()
         self.conn.close()
     def handle_message(self, message):
-        from Inventory.models import Inventory, Pick
-        from Items.models import Items
+        from Inventory.models import inventory, pick
+        from Items.models import items
         message_json = json.loads(message.body)
         message_body = message_json['Message'].split(' ')
         print(message_body)
         if message_body[0] == 'item' and message_body[1] == 'created':
             # create an Inventory object for the item
             try:
-                item = Items.objects.get(id=message_body[2])
-                Inventory.objects.create(item=item, quantity=0, typeI="adjustment")
+                item = items.objects.get(id=message_body[2])
+                inventory.objects.create(item=item, quantity=0, typeI="adjustment")
             except Exception as e:
                 print(f"Item with id {message_body[2]} did not create")
                 print(e)
@@ -91,7 +91,7 @@ class InventoryListener(BaseSQSListener):
             # create a Pick object for the order
             try:
                 order = Orders.objects.get(id=message_body[2])
-                Pick.objects.create(order=order)
+                pick.objects.create(order=order)
             except Exception as e:
                 print(f"Order with id {message_body[2]} did not create")
                 print(e)
@@ -100,16 +100,16 @@ class InventoryListener(BaseSQSListener):
             # and update the quantity of the item in the Inventory object
             # and remove the manufacture object
             # Add a manufacturehistory object for the manufacture object
-            from Manufacture.models import Manufacture, ManufactureHistory
-            from Inventory.models import Inventory
-            from Items.models import Items
+            from Manufacture.models import manufacture, manufacturehistory
+            from Inventory.models import inventory
+            from Items.models import items
             try:
-                manufacture = Manufacture.objects.get(id=message_body[2])
-                inventory = Inventory.objects.get(item=manufacture.item)
+                manufacture = manufacture.objects.get(id=message_body[2])
+                inventory = inventory.objects.get(item=manufacture.item)
                 inventory.quantity += manufacture.quantity
                 inventory.typeI = "shipment"
                 inventory.save()
-                ManufactureHistory.objects.create(manufacture=manufacture.pk, item=manufacture.item, quantity=manufacture.quantity, is_complete=True)
+                manufacturehistory.objects.create(manufacture=manufacture.pk, item=manufacture.item, quantity=manufacture.quantity, is_complete=True)
                 manufacture.delete()
             except Exception as e:
                 print(f"Manufacture with id {message_body[2]} did not create")
@@ -125,8 +125,8 @@ class AccountsReceivableListener(BaseSQSListener):
         self.conn.commit()
         self.conn.close()
     def handle_message(self, message):
-        from Orders.models import Orders
-        from AccountsReceivable.models import AccountsReceivable
+        from Orders.models import orders
+        from AccountsReceivable.models import accountsreceivable
 
         message_json = json.loads(message.body)
         message_body = message_json['Message'].split(' ')
@@ -135,32 +135,32 @@ class AccountsReceivableListener(BaseSQSListener):
         # create an AccountsReceivable object for the order
         if message_body[0] == 'order' and message_body[1] == 'created':
             try:
-                order = Orders.objects.get(id=message_body[2])
+                order = orders.objects.get(id=message_body[2])
                 order_total = Decimal(order.get_total_price_float())
-                AccountsReceivable.objects.create(order=order, amount=order_total)
-            except Orders.DoesNotExist:
+                accountsreceivable.objects.create(order=order, amount=order_total)
+            except orders.DoesNotExist:
                 print(f"Order with id {message_body[2]} does not exist")
         # if the message is an order deleted message
         # delete the AccountsReceivable object for the order if it exists
         elif message_body[0] == 'order' and message_body[1] == 'deleted':    
             try:
-                order = Orders.objects.get(id=message_body[2])
-                accounts_receivable = AccountsReceivable.objects.get(order=order)
+                order = orders.objects.get(id=message_body[2])
+                accounts_receivable = accountsreceivable.objects.get(order=order)
                 accounts_receivable.delete()
-            except AccountsReceivable.DoesNotExist:
+            except accountsreceivable.DoesNotExist:
                 pass
-            except Orders.DoesNotExist:
+            except orders.DoesNotExist:
                 print(f"Order with id {message_body[2]} does not exist")
         # if the message is an order updated message
         # update the AccountsReceivable object for the order if it exists
         elif message_body[0] == 'order' and message_body[1] == 'updated':
-            order = Orders.objects.get(id=message_body[2])
+            order = orders.objects.get(id=message_body[2])
             try:
-                accounts_receivable = AccountsReceivable.objects.get(order=order)
+                accounts_receivable = accountsreceivable.objects.get(order=order)
                 order_total = Decimal(order.get_total_price_float())
                 accounts_receivable.amount = order_total
                 accounts_receivable.save()
-            except AccountsReceivable.DoesNotExist:
+            except accountsreceivable.DoesNotExist:
                 pass
 
 
