@@ -28,9 +28,10 @@ def StartListeners():
         # Each ListenerClass should be named after the queue it listens to
         # in the format <QueueName>Listener
         if ListenerClass.__name__[:-8] not in QueueNames:
-            raise ValueError(f"ListenerClass {ListenerClass.__name__} does not have a corresponding queue")
+            continue
+            #raise ValueError(f"ListenerClass {ListenerClass.__name__} does not have a corresponding queue")
         listener = ListenerClass(queue_url=Queues[QueueNames.index(ListenerClass.__name__[:-8])])
-        StartListenersTask(listener=listener).run()
+        StartListenerTask().run(listener=listener)
         listeners.append(listener)
     return listeners
 

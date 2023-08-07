@@ -19,10 +19,10 @@ class BaseSQSListener(threading.Thread):
     def handle_message(self, message):
         raise NotImplementedError
 
-class Queue1Listener(BaseSQSListener):
+class OrderListener(BaseSQSListener):
     def handle_message(self, message):
         print(f"Queue1Listener handling message: {message}")
 
-class Queue2Listener(BaseSQSListener):
+class ManufactureListener(BaseSQSListener):
     def handle_message(self, message):
         print(f"Queue2Listener handling message: {message}")
