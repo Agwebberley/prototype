@@ -42,7 +42,11 @@ def Listeners(Stop=False):
     listeners = []
     Queues = GetQueueUrlTask().run()
     QueueNames = [queue_url.split("/")[-1] for queue_url in Queues]
-    print(QueueNames)
+    num_classes = 0
+    for ListenerClass in BaseSQSListener.__subclasses__(): 
+        if ListenerClass.__name__[:-8] in QueueNames: num_classes + 1
+    # Create a barrier to wait for all listeners to be created
+    barrier = multiprocessing.Barrier(num_classes)
     for ListenerClass in BaseSQSListener.__subclasses__():
         # Each ListenerClass should be named after the queue it listens to
         # in the format <QueueName>Listener
@@ -50,7 +54,7 @@ def Listeners(Stop=False):
             print(f"ListenerClass {ListenerClass.__name__} does not have a corresponding queue")
             continue
             #raise ValueError(f"ListenerClass {ListenerClass.__name__} does not have a corresponding queue")
-        listener = ListenerClass(queue_url=Queues[QueueNames.index(ListenerClass.__name__[:-8])])
+        listener = ListenerClass(queue_url=Queues[QueueNames.index(ListenerClass.__name__[:-8])], barrier=barrier)
         StartListenerTask().run(listener=listener)
         listeners.append(listener)
     return listeners

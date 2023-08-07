@@ -5,13 +5,15 @@ import time
 import sqlite3
 
 class BaseSQSListener(multiprocessing.Process):
-    def __init__(self, queue_url):
+    def __init__(self, queue_url, barrier):
         multiprocessing.Process.__init__(self)
         self.sqs = boto3.client('sqs')
         self.sns = boto3.client('sns')
         self.queue_url = queue_url
         self.stop_event = multiprocessing.Event()
         print(f"Starting listener for queue {queue_url}")
+        multiprocessing.Process.__init__(self)
+        self.barrier = barrier
 
     def run(self):
         while not self.stop_event.is_set():
@@ -29,6 +31,7 @@ class BaseSQSListener(multiprocessing.Process):
 
 class LogListener(BaseSQSListener):
     def handle_message(self, message):
+        self.barrier.wait()
         from Shared.models import logmessage
         print(f"Log Queue handling message: {message}")
         logmessage.objects.create(message=message["Body"])
