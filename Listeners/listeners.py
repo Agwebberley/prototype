@@ -2,11 +2,10 @@ from decimal import Decimal
 import multiprocessing
 import boto3
 import json
-import time
 import sqlite3
 
 class BaseSQSListener(multiprocessing.Process):
-    def __init__(self, queue_url, barrier):
+    def __init__(self, queue_url):
         multiprocessing.Process.__init__(self)
         self.sqs = boto3.client('sqs')
         self.sns = boto3.client('sns')
@@ -14,7 +13,6 @@ class BaseSQSListener(multiprocessing.Process):
         self.stop_event = multiprocessing.Event()
         print(f"Starting listener for queue {queue_url}")
         multiprocessing.Process.__init__(self)
-        self.barrier = barrier
 
     def run(self):
         while not self.stop_event.is_set():
@@ -30,26 +28,6 @@ class BaseSQSListener(multiprocessing.Process):
     def stop(self):
         self.stop_event.set()
 
-class LogListener(BaseSQSListener):
-    def handle_message(self, message):
-        self.barrier.wait()
-        from Shared.models import logmessage
-        print(f"Log Queue handling message: {message}")
-        logmessage.objects.create(message=message["Body"])
-
-        # Forward the message to its respective queue(s)
-        # Get the sender's name from the message
-        sender = message["Body"].split(" ")[0]
-        # Get the queue(s) that are listening to the sender
-        conn = sqlite3.connect("queue.db")
-        c = conn.cursor()
-        topics = c.execute("SELECT topic FROM queues WHERE listeningto=?", (sender,)).fetchall()
-        conn.close()
-        print(topics)
-        # Send the message to each queue
-        for topic in topics:
-            print("Sending " + topic[0])
-            self.sns.publish(TopicArn=f"arn:aws:sns:us-west-2:710141730058:{topic[0]}", Message=message["Body"])
 
 
 class OrderListener(BaseSQSListener):
@@ -66,6 +44,7 @@ class ManufactureListener(BaseSQSListener):
         self.conn.commit()
         self.conn.close()
     def handle_message(self, message):
+        message = message["Body"].split(" ")
         if message[0] == 'pick' and message[1] == 'updated':
                 from Inventory.models import Pick, Inventory
                 from Items.models import Items
@@ -183,3 +162,24 @@ class AccountsReceivableListener(BaseSQSListener):
                 accounts_receivable.save()
             except AccountsReceivable.DoesNotExist:
                 pass
+
+
+class LogListener(BaseSQSListener):
+    def handle_message(self, message):
+        from Shared.models import logmessage
+        print(f"Log Queue handling message: {message}")
+        logmessage.objects.create(message=message["Body"])
+
+        # Forward the message to its respective queue(s)
+        # Get the sender's name from the message
+        sender = message["Body"].split(" ")[0]
+        # Get the queue(s) that are listening to the sender
+        conn = sqlite3.connect("queue.db")
+        c = conn.cursor()
+        topics = c.execute("SELECT topic FROM queues WHERE listeningto=?", (sender,)).fetchall()
+        conn.close()
+        print(topics)
+        # Send the message to each queue
+        for topic in topics:
+            print("Sending " + topic[0])
+            self.sns.publish(TopicArn=f"arn:aws:sns:us-west-2:710141730058:{topic[0]}", Message=message["Body"])
