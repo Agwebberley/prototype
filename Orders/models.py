@@ -7,8 +7,8 @@ from django.utils import timezone
 from Items.models import items
 from Customers.models import customers
 class orders(models.Model):
-    ordered_date = models.DateTimeField(max_length=6, )
-    updated_date = models.DateTimeField(max_length=6, )
+    created_at = models.DateTimeField(auto_now_add=True,)
+    updated_at = models.DateTimeField(auto_now=True,)
     customers = models.ForeignKey(customers, on_delete=models.CASCADE, related_name="orders")
 
     class Meta:
