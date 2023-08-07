@@ -1,7 +1,7 @@
 from prefect import Flow, Task
 from listeners import BaseSQSListener
 import boto3
-
+import multiprocessing
 
 @Task
 class GetQueueUrlTask():
@@ -15,11 +15,16 @@ class StartListenerTask():
         listener.start()
 @Task
 class StopListenerTask():
-    def run(self, listener):
-        listener.join()  # Or however you decide to implement stopping the listener
+    def run(self):
+        for process in multiprocessing.active_children():
+            process.stop()
 
 @Flow
-def StartListeners():
+def Listeners(Stop=False):
+    if Stop:
+        # If the flow has already been run, stop the listeners
+        StopListenerTask().run()
+        return
     listeners = []
     Queues = GetQueueUrlTask().run()
     QueueNames = [queue_url.split("/")[-1] for queue_url in Queues]
@@ -36,4 +41,5 @@ def StartListeners():
     return listeners
 
 if __name__ == "__main__":
-    listeners = StartListeners()
+    listeners = Listeners()
+    # Listeners(Stop=True)
