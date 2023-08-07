@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class logmessage(models.Model):
     message = models.TextField()
-    created_at = models.DateTimeField(max_length=6, )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         app_label = 'Shared'

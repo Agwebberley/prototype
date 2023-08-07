@@ -1,7 +1,19 @@
 from prefect import Flow, Task
-from listeners import BaseSQSListener
+from Listeners.listeners import BaseSQSListener
 import boto3
 import multiprocessing
+import sqlite3
+
+@Task
+class CreateQueueDatabase():
+    def run(self):
+        conn = sqlite3.connect("queue.db")
+        c = conn.cursor()
+        c.execute("CREATE TABLE IF NOT EXISTS queues (topic text, listeningto text)")
+        # If the table did exist, empty it
+        c.execute("DELETE FROM queues")
+        conn.commit()
+        conn.close()
 
 @Task
 class GetQueueUrlTask():
@@ -21,6 +33,8 @@ class StopListenerTask():
 
 @Flow
 def Listeners(Stop=False):
+    # Create the database if it doesn't exist
+    CreateQueueDatabase().run()
     if Stop:
         # If the flow has already been run, stop the listeners
         StopListenerTask().run()
@@ -33,6 +47,7 @@ def Listeners(Stop=False):
         # Each ListenerClass should be named after the queue it listens to
         # in the format <QueueName>Listener
         if ListenerClass.__name__[:-8] not in QueueNames:
+            print(f"ListenerClass {ListenerClass.__name__} does not have a corresponding queue")
             continue
             #raise ValueError(f"ListenerClass {ListenerClass.__name__} does not have a corresponding queue")
         listener = ListenerClass(queue_url=Queues[QueueNames.index(ListenerClass.__name__[:-8])])
@@ -42,4 +57,7 @@ def Listeners(Stop=False):
 
 if __name__ == "__main__":
     listeners = Listeners()
+    # Join the listeners to the main process
+    for listener in listeners:
+        listener.join()
     # Listeners(Stop=True)

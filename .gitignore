@@ -163,3 +163,4 @@ virt/
 main.pem
 _pginfo/
 _pgbackup/
+queue.db
