@@ -65,7 +65,7 @@ class InventoryListener(BaseSQSListener):
         super().__init__(queue_url)
         self.conn = sqlite3.connect("queue.db")
         self.c = self.conn.cursor()
-        self.c.execute("INSERT INTO queues VALUES (?, ?)", ("Inventory", "item"))
+        self.c.execute("INSERT INTO queues VALUES (?, ?)", ("Inventory", "items"))
         self.c.execute("INSERT INTO queues VALUES (?, ?)", ("Inventory", "order"))
         self.c.execute("INSERT INTO queues VALUES (?, ?)", ("Inventory", "manufacture"))
         self.conn.commit()
@@ -127,8 +127,8 @@ class AccountsReceivableListener(BaseSQSListener):
     def handle_message(self, message):
         from Orders.models import orders
         from AccountsReceivable.models import accountsreceivable
-
-        message_json = json.loads(message.body)
+        print(message)
+        message_json = json.loads(message["Body"])
         message_body = message_json['Message'].split(' ')
 
         # if the message is an order created message
@@ -168,11 +168,12 @@ class LogListener(BaseSQSListener):
     def handle_message(self, message):
         from Shared.models import logmessage
         print(f"Log Queue handling message: {message}")
-        logmessage.objects.create(message=message["Body"])
+        logmessage.objects.create(message=json.loads(message["Body"])["Message"])
 
         # Forward the message to its respective queue(s)
         # Get the sender's name from the message
-        sender = message["Body"].split(" ")[0]
+        sender = json.loads(message["Body"])["Message"].split(" ")[0]
+        print(sender)
         # Get the queue(s) that are listening to the sender
         conn = sqlite3.connect("queue.db")
         c = conn.cursor()

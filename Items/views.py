@@ -16,7 +16,7 @@ class ItemListView(ListView):
         model_fields.remove('orderitem')
         model_fields.remove('inventory')
         model_fields.remove('inventoryhistory')
-        model_fields.remove('bin')
+        model_fields.remove('bin_items')
         model_fields.remove('manufacture')
     except: pass
     

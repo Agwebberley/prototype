@@ -13,7 +13,6 @@ class OrderListView(ListView):
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in orders._meta.get_fields()]
-    print(model_fields)
     try:
         model_fields.remove('_orderitem')
         model_fields.remove('pick')

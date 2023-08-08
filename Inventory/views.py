@@ -13,8 +13,9 @@ class InventoryListView(ListView):
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in inventory._meta.get_fields()]
+    print(model_fields)
     try: 
-        model_fields.remove('inventoryhistory')
+        model_fields.remove('_inventoryhistory')
         model_fields.remove('typeI')
     except: pass
     patterns = {'Update': 'inventory:inventory_update', 'History': 'inventory:inventoryhistory_list'}
@@ -68,7 +69,7 @@ class PickListView(ListView):
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in pick._meta.get_fields()]
-    try: model_fields.remove('items')
+    try: model_fields.remove('_pick_items')
     except: pass
     # Action Button Url Patterns
     patterns = {'Pick Order': 'inventory:pick_update'}   
@@ -98,7 +99,7 @@ class BinListView(ListView):
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in bin._meta.get_fields()]
-    try: model_fields.remove('items')
+    try: model_fields.remove('_bin_items')
     except: pass
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

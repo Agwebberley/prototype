@@ -12,9 +12,10 @@ class AccountsReceivableListView(ListView):
 
     # Set model_fields to the fields of the model
     model_fields = [field.name for field in accountsreceivable._meta.get_fields()]
+
     try: 
-        model_fields.remove('accountsreceivablehistory')
-        model_fields.remove('accountsreceivablepayment')
+        model_fields.remove('_accountsreceivablehistory')
+        model_fields.remove('_accountsreceivablepayment')
     except: pass
     
     patterns = {'Toggle Paid': 'accounts_receivable:toggle_paid', 'Details': 'accounts_receivable:account_details', 'Make Payment': 'accounts_receivable:make_payment'}
