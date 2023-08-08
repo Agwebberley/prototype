@@ -59,13 +59,15 @@ class OrderDeleteView(DeleteView):
         return context
 
 # Order Items
+# TODO: Figure out how to use the generic template
+#       Or fix the custom template
 class OrderDetailView(ListView):
     model = orderitem
     template_name = 'order_detail.html'
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(order_id=self.kwargs['pk'])
+        return queryset.filter(orders_id=self.kwargs['pk'])
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -78,11 +80,11 @@ class OrderItemCreateView(CreateView):
     template_name = 'form.html'
 
     def get_success_url(self):
-        return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.order.pk}) # type: ignore
+        return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.orders.pk}) # type: ignore
 
     def form_valid(self, form):
         order = get_object_or_404(orders, pk=self.kwargs['pk'])
-        form.instance.order = order
+        form.instance.orders = order
         return super().form_valid(form)
 
 class OrderItemUpdateView(UpdateView):

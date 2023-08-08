@@ -24,6 +24,7 @@ class InventoryListView(ListView):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields
         context['patterns'] = self.patterns
+        context['h1'] = 'Inventory'
         return context
 
 class InventoryUpdateView(UpdateView):
@@ -55,6 +56,7 @@ class InventoryHistoryListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields
+        context['h1'] = 'Inventory History'
         return context
 
     # Limit to InventoryHistory for a specific item

@@ -12,7 +12,7 @@ class orderitemForm(forms.ModelForm):
     class Meta:
         from .models import orderitem
         model = orderitem
-        fields = ('quantity', 'items', 'orders', )
+        fields = ('quantity', 'items', )
 
 class ordersForm(forms.ModelForm):
     class Meta:
