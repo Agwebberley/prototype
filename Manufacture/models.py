@@ -5,6 +5,9 @@ from django.utils import timezone
 
 
 from Items.models import items
+
+# TODO: Needs a complete rework
+
 class manufacturehistory(models.Model):
     manufacture = models.IntegerField(null=True, blank=True)
     item = models.IntegerField(null=True, blank=True)

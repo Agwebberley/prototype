@@ -12,7 +12,7 @@ class manufactureForm(forms.ModelForm):
     class Meta:
         from .models import manufacture
         model = manufacture
-        fields = ('quantity', 'date', 'items', 'manufacturehistory', )
+        fields = ('quantity', 'date', 'items',  )
 
 class manufacturehistoryForm(forms.ModelForm):
     class Meta:

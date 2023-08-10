@@ -7,11 +7,12 @@ class ManufactureList(ListView):
     model = manufacture
     template_name = 'listview.html'
     model_fields = [field.name for field in manufacture._meta.get_fields()]
+    print(model_fields)
 
     try:
         model_fields.remove('manufacturehistory')
     except: pass
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['model_fields'] = self.model_fields
