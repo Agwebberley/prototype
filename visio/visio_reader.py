@@ -118,6 +118,8 @@ if __name__ == "__main__":
   elif which == 1:
     filename = 'DrawioWorkflowDiagram.vsdx'
     #start_name = 'Start'
+  elif which == 2:
+    filename = 'Drawing3.vsdx'
   else:
     filename = 'DrawioTestDiagram.vsdx'
     #start_name = 'Customers'
