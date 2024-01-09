@@ -119,7 +119,7 @@ if __name__ == "__main__":
     filename = 'DrawioWorkflowDiagram.vsdx'
     #start_name = 'Start'
   elif which == 2:
-    filename = 'Drawing3.vsdx'
+    filename = './visio/Drawing1.vsdm'
   else:
     filename = 'DrawioTestDiagram.vsdx'
     #start_name = 'Customers'
