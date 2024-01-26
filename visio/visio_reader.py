@@ -1,5 +1,7 @@
 from vsdx import VisioFile
 import sys
+from .cleanup import cleanup_xml_files
+
 
 DBG = False
 
@@ -119,7 +121,7 @@ if __name__ == "__main__":
     filename = 'DrawioWorkflowDiagram.vsdx'
     #start_name = 'Start'
   elif which == 2:
-    filename = './visio/Drawing1.vsdm'
+    filename = './visio/Delivery.vsdx'
   else:
     filename = 'DrawioTestDiagram.vsdx'
     #start_name = 'Customers'
@@ -150,9 +152,24 @@ if __name__ == "__main__":
   #visited_list = []
   #visit_shape_connections(start_shape,visited_list)
 
+  for shape in all_shapes:
+    for cell in shape.cells:
+      if "." in cell:
+        shape.cells.remove(cell)
+
   # Show connections to all objects
   print("\nShowing all shape connections:")
   for shape in all_shapes:
     visio_get_shape_connections(shape)
+
+  # Remove cells with decimal values
+  print("\nRemoving cells with decimal values:")
+  if "\\" in filename:
+    filename = filename.split("\\")[-1]
+    filename = filename.split(".")[0]
+  cleanup_xml_files(filename)
+  
+
+  
 
   # End of program
