@@ -5,11 +5,11 @@ from django.utils import timezone
 
 
 from Items.models import items
-from Customers.models import customers
+#from Customers.models import customers
 class orders(models.Model):
     created_at = models.DateTimeField(auto_now_add=True,)
     updated_at = models.DateTimeField(auto_now=True,)
-    customers = models.ForeignKey(customers, on_delete=models.CASCADE, related_name="orders")
+    customers = models.ForeignKey(Customers.models.customers, on_delete=models.CASCADE, related_name="orders")
 
     class Meta:
         app_label = 'Orders'
