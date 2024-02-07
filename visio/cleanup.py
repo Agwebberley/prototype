@@ -31,10 +31,11 @@ class StarUML:
                                 for relationship in sub_element['ownedElements']:
                                     if relationship['_type'] == 'ERDRelationship':
                                         print(' -', relationship['name'], end='; ')
-                                        other_table_id = relationship['end2']['reference']['$ref']
-                                        for other_element in element['ownedElements']:
-                                            if other_element['_type'] == 'ERDEntity' and other_element['_id'] == other_table_id:
-                                                print(sub_element['name'], '-', other_element['name'], end='; ')
+                                        connected_table_id = relationship['end2']['reference']['$ref']
+                                        print('connected Table:', connected_table_id)
+                                        for connected_element in element['ownedElements']:
+                                            if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == connected_table_id:
+                                                print(sub_element['name'], '-', connected_element['name'], end='; ')
                                                 if 'cardinality' in relationship['end1']:
                                                     cardinality = relationship['end1']['cardinality']
                                                 else:
@@ -55,7 +56,9 @@ class StarUML:
             'DATETIME': 'DateTimeField',
             'TEXT': 'TextField',
         }
-
+        
+        imported_tables = self.get_relationships_imports()
+        print(imported_tables)
         for element in self.data['ownedElements']:
             if element['_type'] == 'ERDDataModel':
                 if 'ownedElements' in element:
@@ -65,14 +68,19 @@ class StarUML:
                             app_name, table_name = model_name.split('.')
                             app_folder = os.path.join('your_project_folder', app_name)
                             os.makedirs(app_folder, exist_ok=True)
-                            with open(os.path.join(app_folder, 'models.py'), 'a') as f:
+                            with open(os.path.join(app_folder, 'models.py'), 'w') as f:
                                 f.write(f"from django.db import models\n")
-                                self.write_relationship_imports(element, f)
+                                if app_name in imported_tables:
+                                    for connected_app_name in imported_tables[app_name]:
+                                        f.write(f"from {connected_app_name}.models import ")
+                                        for connected_table_name in imported_tables[app_name][connected_app_name]:
+                                            f.write(f"{connected_table_name}, ")
+                                        f.write("\n")
                                 f.write(f"\n")
                                 f.write(f"class {table_name}(models.Model):\n")
                                 self.write_attributes(sub_element, f, type_mapping)
                                 self.write_relationships(sub_element, element, f, app_name)
-                            f.write(f"\n")
+                                f.write(f"\n")
 
     def write_attributes(self, sub_element, file, type_mapping):
         if 'columns' in sub_element:
@@ -86,32 +94,68 @@ class StarUML:
         if 'ownedElements' in sub_element:
             for relationship in sub_element['ownedElements']:
                 if relationship['_type'] == 'ERDRelationship':
-                    other_table_id = relationship['end2']['reference']['$ref']
-                    for other_element in element['ownedElements']:
-                        if other_element['_type'] == 'ERDEntity' and other_element['_id'] == other_table_id:
-                            other_table_name = other_element['name']
-                            other_app_name, other_table_name = other_table_name.split('.')
-                            file.write(f"    {other_table_name} = models.ForeignKey('{other_app_name}.{other_table_name}', on_delete=models.CASCADE)\n")
+                    connected_table_id = relationship['end2']['reference']['$ref']
+                    for connected_element in element['ownedElements']:
+                        if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == connected_table_id:
+                            connected_table_name = connected_element['name']
+                            connected_app_name, connected_table_name = connected_table_name.split('.')
+                            file.write(f"    {connected_table_name} = models.ForeignKey('{connected_app_name}.{connected_table_name}', on_delete=models.CASCADE)\n")
         
-    def write_relationship_imports(self, element, file):
+    def write_relationship_imports(self, sub_element, app_name, existing_code, file):
         imported_tables = set()
-        for sub_element in element['ownedElements']:
-            if sub_element['_type'] == 'ERDEntity':
-                for relationship in sub_element['ownedElements']:
-                    if relationship['_type'] == 'ERDRelationship':
-                        other_table_id = relationship['end2']['reference']['$ref']
-                        for other_element in element['ownedElements']:
-                            if other_element['_type'] == 'ERDEntity' and other_element['_id'] == other_table_id:
-                                other_table_name = other_element['name']
-                                other_app_name, other_table_name = other_table_name.split('.')
-                                import_statement = f"from {other_app_name}.models import {other_table_name}\n"
-                                if other_table_name not in imported_tables:
-                                    file.write(import_statement)
-                                    imported_tables.add(other_table_name)
+        # If There are relationships in a table, we need to import the related tables if there are not in the same file
+        # If anconnected table is in the same file, we don't need to import it again
+        # The import statement is added to the top of the file
+        if 'ownedElements' in sub_element:
+            for relationship in sub_element['ownedElements']:
+                if relationship['_type'] == 'ERDRelationship':
+                    connected_table_id = relationship['end2']['reference']['$ref']
+                    for connected_element in sub_element['ownedElements']:
+                        if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == connected_table_id:
+                            connected_table_name = connected_element['name']
+                            connected_app_name, connected_table_name = connected_table_name.split('.')
+                            if connected_app_name != app_name:
+                                if connected_app_name not in imported_tables:
+                                    import_statement = f"from {connected_app_name}.models import {connected_table_name}\n"
+                                    if import_statement not in existing_code:
+                                        file.write(f"from {connected_app_name}.models import {connected_table_name}\n" + existing_code)
+                                    imported_tables.add(connected_app_name)
+                            else:
+                                imported_tables.add(connected_app_name)
+                            break
+    
+    def get_relationships_imports(self):
+        # Return a dicionary with the app name as the key and the set of imported tables as the value
+        imported_tables = {}
+        for element in self.data['ownedElements']:
+            if element['_type'] == 'ERDDataModel':
+                if 'ownedElements' in element:
+                    for sub_element in element['ownedElements']:
+                        if sub_element['_type'] == 'ERDEntity':
+                            if 'ownedElements' in sub_element:
+                                for relationship in sub_element['ownedElements']:
+                                    if relationship['_type'] == 'ERDRelationship':
+                                        connected_table_id = relationship['end2']['reference']['$ref']
+                                        for connected_element in element['ownedElements']:
+                                            if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == connected_table_id:
+                                                connected_table_name = connected_element['name']
+                                                table_name = sub_element['name']
+                                                connected_app_name, connected_table_name = connected_table_name.split('.')
+                                                app_name, table_name = table_name.split('.')
+                                                # Dictionary structure:
+                                                # {app_name: {connected_app_name: [table1, table2, ...]}}
+                                                if app_name not in imported_tables:
+                                                    imported_tables[app_name] = {}
+                                                if connected_app_name not in imported_tables[app_name]:
+                                                    imported_tables[app_name][connected_app_name] = set()
+                                                imported_tables[app_name][connected_app_name].add(connected_table_name)
+        return imported_tables
+        
+    
 
 if __name__ == '__main__':
     file_path = r'prototype\Database.mdj'
     visio_cleanup = StarUML(file_path)
     visio_cleanup.load_data()
-    visio_cleanup.print_out()
+    #visio_cleanup.print_out()
     visio_cleanup.generate_django_models()
