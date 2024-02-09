@@ -1,7 +1,14 @@
 import json
 import os
+import sqlite3
+import ast
 
 class StarUML:
+    """
+    TODO: Add a validation function to check if the models already match the database design
+    TODO: Allow any functions within models.py files to persist
+
+    """
     def __init__(self, file_path):
         self.file_path = file_path
         self.data = None
@@ -59,6 +66,7 @@ class StarUML:
         
         imported_tables = self.get_relationships_imports()
         print(imported_tables)
+        file_contents = {}
         for element in self.data['ownedElements']:
             if element['_type'] == 'ERDDataModel':
                 if 'ownedElements' in element:
@@ -68,29 +76,39 @@ class StarUML:
                             app_name, table_name = model_name.split('.')
                             app_folder = os.path.join('your_project_folder', app_name)
                             os.makedirs(app_folder, exist_ok=True)
-                            with open(os.path.join(app_folder, 'models.py'), 'w') as f:
-                                f.write(f"from django.db import models\n")
+                            if app_folder not in file_contents:
+                                file_contents[app_folder] = ''
+                                file_contents[app_folder] += f"from django.db import models\n"
                                 if app_name in imported_tables:
                                     for connected_app_name in imported_tables[app_name]:
-                                        f.write(f"from {connected_app_name}.models import ")
+                                        file_contents[app_folder] += f"from {connected_app_name}.models import "
                                         for connected_table_name in imported_tables[app_name][connected_app_name]:
-                                            f.write(f"{connected_table_name}, ")
-                                        f.write("\n")
-                                f.write(f"\n")
-                                f.write(f"class {table_name}(models.Model):\n")
-                                self.write_attributes(sub_element, f, type_mapping)
-                                self.write_relationships(sub_element, element, f, app_name)
-                                f.write(f"\n")
+                                            file_contents[app_folder] += f"{connected_table_name}, "
+                                        # Remove the last comma and space
+                                        file_contents[app_folder] = file_contents[app_folder][:-2]
+                                        file_contents[app_folder] += "\n"
+                            file_contents[app_folder] += "\n"
+                            file_contents[app_folder] += f"class {table_name}(models.Model):\n"
+                            file_contents[app_folder] += self.get_attributes(sub_element, type_mapping)
+                            file_contents[app_folder] += self.get_relationships(sub_element, element, app_name)
+                            file_contents[app_folder] += "\n"
 
-    def write_attributes(self, sub_element, file, type_mapping):
+        for app_folder, content in file_contents.items():
+            with open(os.path.join(app_folder, 'models.py'), 'w') as f:
+                f.write(content)
+
+    def get_attributes(self, sub_element, type_mapping):
+        attributes = ""
         if 'columns' in sub_element:
             for attribute in sub_element['columns']:
                 attribute_name = attribute['name']
                 attribute_type = attribute['type']
                 django_attribute_type = type_mapping.get(attribute_type, 'CharField')
-                file.write(f"    {attribute_name} = models.{django_attribute_type}()\n")
+                attributes += f"    {attribute_name} = models.{django_attribute_type}()\n"
+        return attributes
 
-    def write_relationships(self, sub_element, element, file, app_name):
+    def get_relationships(self, sub_element, element, app_name):
+        relationships = ""
         if 'ownedElements' in sub_element:
             for relationship in sub_element['ownedElements']:
                 if relationship['_type'] == 'ERDRelationship':
@@ -99,31 +117,10 @@ class StarUML:
                         if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == connected_table_id:
                             connected_table_name = connected_element['name']
                             connected_app_name, connected_table_name = connected_table_name.split('.')
-                            file.write(f"    {connected_table_name} = models.ForeignKey('{connected_app_name}.{connected_table_name}', on_delete=models.CASCADE)\n")
+                            relationships += f"    {connected_table_name} = models.ForeignKey('{connected_app_name}.{connected_table_name}', on_delete=models.CASCADE)\n"
+        return relationships
         
-    def write_relationship_imports(self, sub_element, app_name, existing_code, file):
-        imported_tables = set()
-        # If There are relationships in a table, we need to import the related tables if there are not in the same file
-        # If anconnected table is in the same file, we don't need to import it again
-        # The import statement is added to the top of the file
-        if 'ownedElements' in sub_element:
-            for relationship in sub_element['ownedElements']:
-                if relationship['_type'] == 'ERDRelationship':
-                    connected_table_id = relationship['end2']['reference']['$ref']
-                    for connected_element in sub_element['ownedElements']:
-                        if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == connected_table_id:
-                            connected_table_name = connected_element['name']
-                            connected_app_name, connected_table_name = connected_table_name.split('.')
-                            if connected_app_name != app_name:
-                                if connected_app_name not in imported_tables:
-                                    import_statement = f"from {connected_app_name}.models import {connected_table_name}\n"
-                                    if import_statement not in existing_code:
-                                        file.write(f"from {connected_app_name}.models import {connected_table_name}\n" + existing_code)
-                                    imported_tables.add(connected_app_name)
-                            else:
-                                imported_tables.add(connected_app_name)
-                            break
-    
+
     def get_relationships_imports(self):
         # Return a dicionary with the app name as the key and the set of imported tables as the value
         imported_tables = {}
@@ -150,12 +147,105 @@ class StarUML:
                                                     imported_tables[app_name][connected_app_name] = set()
                                                 imported_tables[app_name][connected_app_name].add(connected_table_name)
         return imported_tables
-        
     
+
+class ClassFunctionVisitor(ast.NodeVisitor):
+    def __init__(self):
+        self.classes = {}
+
+    def visit_ClassDef(self, node):
+        # Initialize an empty list for each class to hold its functions
+        self.classes[node.name] = []
+        # Visit each node within the class definition to find function definitions
+        self.generic_visit(node)
+
+    def visit_FunctionDef(self, node):
+        # Assuming the parent node is a ClassDef, add the function name to the class's list
+        if isinstance(node.parent, ast.ClassDef):
+            self.classes[node.parent.name].append(node.name)
+
+    def generic_visit(self, node):
+        # Before visiting children, set the parent attribute
+        for child in ast.iter_child_nodes(node):
+            child.parent = node
+        super().generic_visit(node)
+    
+def get_parent(node, classes):
+    # Since there is no built-in way to get the parent node, we can use this method
+    # We have to traverse the tree from the root to the current node to find the parent
+
+    for parent in ast.walk(classes):
+        for child in ast.iter_child_nodes(parent):
+            if child == node:
+                return parent
+
+
+def parse_python_file_with_ast(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+        # Parse the content into an AST
+        tree = ast.parse(content)
+        # Initialize the visitor
+        visitor = ClassFunctionVisitor()
+        # Visit the AST to fill the classes dictionary
+        visitor.visit(tree)
+        return visitor.classes
+
+def send_to_database(file_path):
+    # Parse the file and get the classes and functions
+    classes = parse_python_file_with_ast(file_path)
+    # Using AST, find the actual code for each function
+    with open(file_path, 'r') as file:
+        content = file.read()
+        tree = ast.parse(content)
+        for class_name, functions in classes.items():
+            for function_name in functions:
+                for node in ast.walk(tree):
+                    parent = get_parent(node, tree)
+                    if parent is not None:
+                        if isinstance(node, ast.FunctionDef) and node.name == function_name and parent.name == class_name:
+                            code = ast.unparse(node)
+                            save_to_database(class_name, function_name, code)
+                    
+
+def save_to_database(class_name, function_name, code):
+    # Connect to the database
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Create a table if it doesn't exist
+    cursor.execute('''CREATE TABLE IF NOT EXISTS functions
+                      (class_name TEXT, function_name TEXT, code TEXT)''')
+
+    # Insert the data into the table
+    cursor.execute("DELETE FROM functions")
+    cursor.execute("INSERT INTO functions VALUES (?, ?, ?)", (class_name, function_name, code))
+
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
+
+def print_from_database():
+    # Connect to the database
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Select all the data from the table
+    cursor.execute("SELECT * FROM functions")
+
+    # Print the data
+    for row in cursor.fetchall():
+        print(row)
+
+    # Close the connection
+    conn.close()
 
 if __name__ == '__main__':
     file_path = r'prototype\Database.mdj'
     visio_cleanup = StarUML(file_path)
     visio_cleanup.load_data()
     #visio_cleanup.print_out()
-    visio_cleanup.generate_django_models()
+    #visio_cleanup.generate_django_models()
+    print(parse_python_file_with_ast(r'Orders\\models.py'))
+    send_to_database(r'Orders\\models.py')
+    print_from_database()
