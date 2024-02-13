@@ -7,3 +7,4 @@ class manufacture(models.Model):
 
 class manufactureHistory(models.Model):
 
+    pass

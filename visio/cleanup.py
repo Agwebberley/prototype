@@ -9,13 +9,39 @@ class StarUML:
     TODO: Allow any functions within models.py files to persist
 
     """
-    def __init__(self, file_path):
+    def __init__(self, file_path, folder_path='your_project_folder'):
         self.file_path = file_path
         self.data = None
+        self.folder_path = folder_path
+        cfv = ClassFunctionVisitor()
+        self.cfv = cfv
+
 
     def load_data(self):
         with open(self.file_path) as f:
             self.data = json.load(f)
+    
+    def get_app_names(self):
+        # Get a list of all of the app names
+        app_names = []
+        for element in self.data['ownedElements']:
+            if element['_type'] == 'ERDDataModel':
+                if 'ownedElements' in element:
+                    for sub_element in element['ownedElements']:
+                        if sub_element['_type'] == 'ERDEntity':
+                            app_name = sub_element['name'].split('.')[0]
+                            if app_name not in app_names:
+                                app_names.append(app_name)
+        return app_names
+    
+    def get_file_paths(self):
+        # Get a list of all of the file paths
+        file_paths = []
+        for app_name in self.get_app_names():
+            file_paths.append(os.path.join(self.folder_path, app_name, 'models.py'))
+        return file_paths
+
+
 
     def print_out(self):
         for element in self.data['ownedElements']:
@@ -63,6 +89,7 @@ class StarUML:
             'DATETIME': 'DateTimeField',
             'TEXT': 'TextField',
         }
+        empty_classes = self.get_empty_classes()
         
         imported_tables = self.get_relationships_imports()
         print(imported_tables)
@@ -74,7 +101,7 @@ class StarUML:
                         if sub_element['_type'] == 'ERDEntity':
                             model_name = sub_element['name']
                             app_name, table_name = model_name.split('.')
-                            app_folder = os.path.join('your_project_folder', app_name)
+                            app_folder = os.path.join(self.folder_path, app_name)
                             os.makedirs(app_folder, exist_ok=True)
                             if app_folder not in file_contents:
                                 file_contents[app_folder] = ''
@@ -92,6 +119,8 @@ class StarUML:
                             file_contents[app_folder] += self.get_attributes(sub_element, type_mapping)
                             file_contents[app_folder] += self.get_relationships(sub_element, element, app_name)
                             file_contents[app_folder] += "\n"
+                            if app_name in empty_classes and table_name in empty_classes[app_name]:
+                                file_contents[app_folder] += "    pass\n"
 
         for app_folder, content in file_contents.items():
             with open(os.path.join(app_folder, 'models.py'), 'w') as f:
@@ -148,6 +177,22 @@ class StarUML:
                                                 imported_tables[app_name][connected_app_name].add(connected_table_name)
         return imported_tables
     
+    def get_empty_classes(self):
+        # Return a dictionary with the app name as the key and the set of empty classes as the value
+        empty_classes = {}
+        for element in self.data['ownedElements']:
+            if element['_type'] == 'ERDDataModel':
+                if 'ownedElements' in element:
+                    for sub_element in element['ownedElements']:
+                        if sub_element['_type'] == 'ERDEntity':
+                            if 'columns' not in sub_element:
+                                app_name, table_name = sub_element['name'].split('.')
+                                if app_name not in empty_classes:
+                                    empty_classes[app_name] = set()
+                                empty_classes[app_name].add(table_name)
+
+        
+        return empty_classes
 
 class ClassFunctionVisitor(ast.NodeVisitor):
     def __init__(self):
@@ -158,54 +203,46 @@ class ClassFunctionVisitor(ast.NodeVisitor):
         self.classes[node.name] = []
         # Visit each node within the class definition to find function definitions
         self.generic_visit(node)
-
     def visit_FunctionDef(self, node):
         # Assuming the parent node is a ClassDef, add the function name to the class's list
         if isinstance(node.parent, ast.ClassDef):
             self.classes[node.parent.name].append(node.name)
-
     def generic_visit(self, node):
         # Before visiting children, set the parent attribute
         for child in ast.iter_child_nodes(node):
             child.parent = node
         super().generic_visit(node)
     
-def get_parent(node, classes):
-    # Since there is no built-in way to get the parent node, we can use this method
-    # We have to traverse the tree from the root to the current node to find the parent
-
-    for parent in ast.walk(classes):
-        for child in ast.iter_child_nodes(parent):
-            if child == node:
-                return parent
-
-
-def parse_python_file_with_ast(file_path):
-    with open(file_path, 'r') as file:
-        content = file.read()
-        # Parse the content into an AST
-        tree = ast.parse(content)
-        # Initialize the visitor
-        visitor = ClassFunctionVisitor()
-        # Visit the AST to fill the classes dictionary
-        visitor.visit(tree)
-        return visitor.classes
-
-def send_to_database(file_path):
-    # Parse the file and get the classes and functions
-    classes = parse_python_file_with_ast(file_path)
-    # Using AST, find the actual code for each function
-    with open(file_path, 'r') as file:
-        content = file.read()
-        tree = ast.parse(content)
-        for class_name, functions in classes.items():
-            for function_name in functions:
-                for node in ast.walk(tree):
-                    parent = get_parent(node, tree)
-                    if parent is not None:
-                        if isinstance(node, ast.FunctionDef) and node.name == function_name and parent.name == class_name:
-                            code = ast.unparse(node)
-                            save_to_database(class_name, function_name, code)
+    def get_parent(self, node):
+        # Since there is no built-in way to get the parent node, we can use this method
+        # We have to traverse the tree from the root to the current node to find the parent
+        for parent in ast.walk(self.tree):
+            for child in ast.iter_child_nodes(parent):
+                if child == node:
+                    return parent
+    def parse_python_file_with_ast(self, file_path):
+        with open(file_path, 'r') as file:
+            content = file.read()
+            # Parse the content into an AST
+            self.tree = ast.parse(content)
+            # Visit the AST to fill the classes dictionary
+            self.visit(self.tree)
+        return self.classes
+    def send_to_database(self, file_path):
+        # Parse the file and get the classes and functions
+        classes = self.parse_python_file_with_ast(file_path)
+        # Using AST, find the actual code for each function
+        with open(file_path, 'r') as file:
+            content = file.read()
+            tree = ast.parse(content)
+            for class_name, functions in classes.items():
+                for function_name in functions:
+                    for node in ast.walk(tree):
+                        parent = self.get_parent(node)
+                        if parent is not None:
+                            if isinstance(node, ast.FunctionDef) and node.name == function_name and parent.name == class_name:
+                                code = ast.unparse(node)
+                                save_to_database(class_name, function_name, code)
                     
 
 def save_to_database(class_name, function_name, code):
@@ -245,7 +282,8 @@ if __name__ == '__main__':
     visio_cleanup = StarUML(file_path)
     visio_cleanup.load_data()
     #visio_cleanup.print_out()
-    #visio_cleanup.generate_django_models()
-    print(parse_python_file_with_ast(r'Orders\\models.py'))
-    send_to_database(r'Orders\\models.py')
+    visio_cleanup.generate_django_models()
+    cfv = ClassFunctionVisitor()
+    print(cfv.parse_python_file_with_ast(r'Orders\\models.py'))
+    cfv.send_to_database(r'Orders\\models.py')
     print_from_database()
