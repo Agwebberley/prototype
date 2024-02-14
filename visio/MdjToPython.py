@@ -278,12 +278,16 @@ def print_from_database():
     conn.close()
 
 if __name__ == '__main__':
+    # Note: Path may need to be changed to the location of the Database.mdj file
     file_path = r'prototype\Database.mdj'
     visio_cleanup = StarUML(file_path)
     visio_cleanup.load_data()
-    #visio_cleanup.print_out()
+    visio_cleanup.print_out()
     visio_cleanup.generate_django_models()
-    cfv = ClassFunctionVisitor()
-    print(cfv.parse_python_file_with_ast(r'Orders\\models.py'))
-    cfv.send_to_database(r'Orders\\models.py')
-    print_from_database()
+    
+
+    # WIP: This is for handling/perseing the functions within the models.py file
+    #cfv = ClassFunctionVisitor()
+    #print(cfv.parse_python_file_with_ast(r'Orders\\models.py'))
+    #cfv.send_to_database(r'Orders\\models.py')
+    #print_from_database()
