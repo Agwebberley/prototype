@@ -42,6 +42,12 @@ class CustomerUpdateView(UpdateView):
     form_class = customersForm
     template_name = 'form.html'
 
+    def form_invalid(self, form):
+        return JsonResponse(form.errors, status=400)
+    
+    def get_success_url(self):
+        return reverse_lazy('customers:customer_list')
+
 class CustomerDeleteView(DeleteView):
     model = customers
     success_url = reverse_lazy('customers:customer_list')

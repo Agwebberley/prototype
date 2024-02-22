@@ -46,6 +46,12 @@ class OrderUpdateView(UpdateView):
     form_class = ordersForm
     template_name = 'form.html'
 
+    def form_invalid(self, form):
+        return JsonResponse(form.errors, status=400)
+    
+    def get_success_url(self):
+        return reverse_lazy('orders:order_list')
+
 class OrderDeleteView(DeleteView):
     model = orders
     success_url = reverse_lazy('orders:order_list')

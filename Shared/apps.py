@@ -6,4 +6,5 @@ class SharedConfig(AppConfig):
     name = 'Shared'
 
     def ready(self):
-        import Shared.signals
+        pass
+        #import Shared.signals

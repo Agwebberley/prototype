@@ -21,17 +21,21 @@ class StarUML:
         with open(self.file_path) as f:
             self.data = json.load(f)
     
-    def get_app_names(self):
-        # Get a list of all of the app names
-        app_names = []
+    def iterate_elements(self, predicate=None):
         for element in self.data['ownedElements']:
             if element['_type'] == 'ERDDataModel':
                 if 'ownedElements' in element:
                     for sub_element in element['ownedElements']:
                         if sub_element['_type'] == 'ERDEntity':
-                            app_name = sub_element['name'].split('.')[0]
-                            if app_name not in app_names:
-                                app_names.append(app_name)
+                            if predicate is None or predicate(sub_element):
+                                yield sub_element
+    
+    def get_app_names(self):
+        app_names = []
+        for sub_element in self.iterate_elements():
+            app_name = sub_element['name'].split('.')[0]
+            if app_name not in app_names:
+                app_names.append(app_name)
         return app_names
     
     def get_file_paths(self):
@@ -44,40 +48,35 @@ class StarUML:
 
 
     def print_out(self):
-        for element in self.data['ownedElements']:
-            if element['_type'] == 'ERDDataModel':
-                if 'ownedElements' in element:
-                    for sub_element in element['ownedElements']:
-                        if sub_element['_type'] == 'ERDEntity':
-                            print('Table:', sub_element['name'])
-                            print('Columns:')
-                            if 'columns' in sub_element:
-                                for attribute in sub_element['columns']:
-                                    print(' -', attribute['name'], ':', attribute['type'])
-                                    if 'tags' in attribute:
-                                        print('    Tags:')
-                                        for tag in attribute['tags']:
-                                            print('     -', tag['name'], ':', tag['value'])
+        def get_table_info(sub_element):
+            output = []
+            output.append('Table: ' + sub_element['name'])
+            output.append('Columns:')
+            if 'columns' in sub_element:
+                for attribute in sub_element['columns']:
+                    output.append(' - ' + attribute['name'] + ': ' + attribute['type'])
+                    if 'tags' in attribute:
+                        output.append('    Tags:')
+                        for tag in attribute['tags']:
+                            output.append('     - ' + tag['name'] + ': ' + tag['value'])
 
-                            print('Relationships:')
-                            if 'ownedElements' in sub_element:
-                                for relationship in sub_element['ownedElements']:
-                                    if relationship['_type'] == 'ERDRelationship':
-                                        print(' -', relationship['name'], end='; ')
-                                        connected_table_id = relationship['end2']['reference']['$ref']
-                                        print('connected Table:', connected_table_id)
-                                        for connected_element in element['ownedElements']:
-                                            if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == connected_table_id:
-                                                print(sub_element['name'], '-', connected_element['name'], end='; ')
-                                                if 'cardinality' in relationship['end1']:
-                                                    cardinality = relationship['end1']['cardinality']
-                                                else:
-                                                    cardinality = '1'
-                                                if 'cardinality' in relationship['end2']:
-                                                    cardinality += '-' + relationship['end2']['cardinality']
-                                                else:
-                                                    cardinality += '-1'
-                                                print('Cardinality:', cardinality)
+            output.append('Relationships:')
+            if 'ownedElements' in sub_element:
+                for relationship in sub_element['ownedElements']:
+                    if relationship['_type'] == 'ERDRelationship':
+                        output.append(' - ' + relationship['name'] + '; connected Table: ' + relationship['end2']['reference']['$ref'])
+                        for connected_element in self.data['ownedElements']:
+                            if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == relationship['end2']['reference']['$ref']:
+                                output.append(sub_element['name'] + ' - ' + connected_element['name'] + '; Cardinality: ' +
+                                              (relationship['end1']['cardinality'] if 'cardinality' in relationship['end1'] else '1') +
+                                              '-' +
+                                              (relationship['end2']['cardinality'] if 'cardinality' in relationship['end2'] else '1'))
+
+            return '\n'.join(output)
+
+        output = [get_table_info(sub_element) for sub_element in self.data['ownedElements'] 
+                  if sub_element['_type'] == 'ERDDataModel' and 'ownedElements' in sub_element]
+        print('\n'.join(output))
 
     def generate_django_models(self):
         type_mapping = {
@@ -90,37 +89,33 @@ class StarUML:
             'TEXT': 'TextField',
         }
         empty_classes = self.get_empty_classes()
-        
         imported_tables = self.get_relationships_imports()
-        print(imported_tables)
         file_contents = {}
+
         for element in self.data['ownedElements']:
-            if element['_type'] == 'ERDDataModel':
-                if 'ownedElements' in element:
-                    for sub_element in element['ownedElements']:
-                        if sub_element['_type'] == 'ERDEntity':
-                            model_name = sub_element['name']
-                            app_name, table_name = model_name.split('.')
-                            app_folder = os.path.join(self.folder_path, app_name)
-                            os.makedirs(app_folder, exist_ok=True)
-                            if app_folder not in file_contents:
-                                file_contents[app_folder] = ''
-                                file_contents[app_folder] += f"from django.db import models\n"
-                                if app_name in imported_tables:
-                                    for connected_app_name in imported_tables[app_name]:
-                                        file_contents[app_folder] += f"from {connected_app_name}.models import "
-                                        for connected_table_name in imported_tables[app_name][connected_app_name]:
-                                            file_contents[app_folder] += f"{connected_table_name}, "
-                                        # Remove the last comma and space
-                                        file_contents[app_folder] = file_contents[app_folder][:-2]
-                                        file_contents[app_folder] += "\n"
-                            file_contents[app_folder] += "\n"
-                            file_contents[app_folder] += f"class {table_name}(models.Model):\n"
-                            file_contents[app_folder] += self.get_attributes(sub_element, type_mapping)
-                            file_contents[app_folder] += self.get_relationships(sub_element, element, app_name)
-                            file_contents[app_folder] += "\n"
-                            if app_name in empty_classes and table_name in empty_classes[app_name]:
-                                file_contents[app_folder] += "    pass\n"
+            if element['_type'] == 'ERDDataModel' and 'ownedElements' in element:
+                for sub_element in element['ownedElements']:
+                    if sub_element['_type'] == 'ERDEntity':
+                        model_name = sub_element['name']
+                        app_name, table_name = model_name.split('.')
+                        app_folder = os.path.join(self.folder_path, app_name)
+                        os.makedirs(app_folder, exist_ok=True)
+
+                        if app_folder not in file_contents:
+                            file_contents[app_folder] = f"from django.db import models\n"
+                            if app_name in imported_tables:
+                                for connected_app_name, connected_tables in imported_tables[app_name].items():
+                                    file_contents[app_folder] += f"from {connected_app_name}.models import "
+                                    file_contents[app_folder] += ", ".join(connected_tables)
+                                    file_contents[app_folder] += "\n"
+
+                        file_contents[app_folder] += f"\n\nclass {table_name}(models.Model):\n"
+                        file_contents[app_folder] += self.get_attributes(sub_element, type_mapping)
+                        file_contents[app_folder] += self.get_relationships(sub_element, element, app_name)
+                        file_contents[app_folder] += "\n"
+
+                        if app_name in empty_classes and table_name in empty_classes[app_name]:
+                            file_contents[app_folder] += "    pass\n"
 
         for app_folder, content in file_contents.items():
             with open(os.path.join(app_folder, 'models.py'), 'w') as f:
@@ -136,62 +131,49 @@ class StarUML:
                 attributes += f"    {attribute_name} = models.{django_attribute_type}()\n"
         return attributes
 
-    def get_relationships(self, sub_element, element, app_name):
+    def get_relationships(self, sub_element, element):
         relationships = ""
-        if 'ownedElements' in sub_element:
-            for relationship in sub_element['ownedElements']:
-                if relationship['_type'] == 'ERDRelationship':
-                    connected_table_id = relationship['end2']['reference']['$ref']
-                    for connected_element in element['ownedElements']:
-                        if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == connected_table_id:
-                            connected_table_name = connected_element['name']
-                            connected_app_name, connected_table_name = connected_table_name.split('.')
-                            relationships += f"    {connected_table_name} = models.ForeignKey('{connected_app_name}.{connected_table_name}', on_delete=models.CASCADE)\n"
+        for connected_element in self.iterate_elements(element, predicate=lambda x: x['_type'] == 'ERDEntity' and x['_id'] == sub_element['end2']['reference']['$ref']):
+            connected_table_name = connected_element['name']
+            connected_app_name, connected_table_name = connected_table_name.split('.')
+            relationships += f"    {connected_table_name} = models.ForeignKey('{connected_app_name}.{connected_table_name}', on_delete=models.CASCADE)\n"
         return relationships
         
 
     def get_relationships_imports(self):
-        # Return a dicionary with the app name as the key and the set of imported tables as the value
+        # Return a dictionary with the app name as the key and the set of imported tables as the value
         imported_tables = {}
-        for element in self.data['ownedElements']:
-            if element['_type'] == 'ERDDataModel':
-                if 'ownedElements' in element:
-                    for sub_element in element['ownedElements']:
-                        if sub_element['_type'] == 'ERDEntity':
-                            if 'ownedElements' in sub_element:
-                                for relationship in sub_element['ownedElements']:
-                                    if relationship['_type'] == 'ERDRelationship':
-                                        connected_table_id = relationship['end2']['reference']['$ref']
-                                        for connected_element in element['ownedElements']:
-                                            if connected_element['_type'] == 'ERDEntity' and connected_element['_id'] == connected_table_id:
-                                                connected_table_name = connected_element['name']
-                                                table_name = sub_element['name']
-                                                connected_app_name, connected_table_name = connected_table_name.split('.')
-                                                app_name, table_name = table_name.split('.')
-                                                # Dictionary structure:
-                                                # {app_name: {connected_app_name: [table1, table2, ...]}}
-                                                if app_name not in imported_tables:
-                                                    imported_tables[app_name] = {}
-                                                if connected_app_name not in imported_tables[app_name]:
-                                                    imported_tables[app_name][connected_app_name] = set()
-                                                imported_tables[app_name][connected_app_name].add(connected_table_name)
+        for element in self.iterate_elements(predicate=lambda x: x['_type'] == 'ERDDataModel'):
+            for sub_element in self.iterate_elements(element, predicate=lambda x: x['_type'] == 'ERDEntity'):
+                if 'ownedElements' in sub_element:
+                    for relationship in self.iterate_elements(sub_element, predicate=lambda x: x['_type'] == 'ERDRelationship'):
+                        connected_table_id = relationship['end2']['reference']['$ref']
+                        for connected_element in self.iterate_elements(element, predicate=lambda x: x['_type'] == 'ERDEntity' and x['_id'] == connected_table_id):
+                            connected_table_name = connected_element['name']
+                            table_name = sub_element['name']
+                            connected_app_name, connected_table_name = connected_table_name.split('.')
+                            app_name, table_name = table_name.split('.')
+                            # Dictionary structure:
+                            # {app_name: {connected_app_name: [table1, table2, ...]}}
+                            if app_name not in imported_tables:
+                                imported_tables[app_name] = {}
+                            if connected_app_name not in imported_tables[app_name]:
+                                imported_tables[app_name][connected_app_name] = set()
+                            imported_tables[app_name][connected_app_name].add(connected_table_name)
         return imported_tables
-    
+
     def get_empty_classes(self):
         # Return a dictionary with the app name as the key and the set of empty classes as the value
         empty_classes = {}
         for element in self.data['ownedElements']:
             if element['_type'] == 'ERDDataModel':
                 if 'ownedElements' in element:
-                    for sub_element in element['ownedElements']:
-                        if sub_element['_type'] == 'ERDEntity':
-                            if 'columns' not in sub_element:
-                                app_name, table_name = sub_element['name'].split('.')
-                                if app_name not in empty_classes:
-                                    empty_classes[app_name] = set()
-                                empty_classes[app_name].add(table_name)
-
-        
+                    for sub_element in self.iterate_elements(element, predicate=lambda x: x['_type'] == 'ERDEntity'):
+                        if 'columns' not in sub_element:
+                            app_name, table_name = sub_element['name'].split('.')
+                            if app_name not in empty_classes:
+                                empty_classes[app_name] = set()
+                            empty_classes[app_name].add(table_name)
         return empty_classes
 
 class ClassFunctionVisitor(ast.NodeVisitor):
@@ -243,7 +225,39 @@ class ClassFunctionVisitor(ast.NodeVisitor):
                             if isinstance(node, ast.FunctionDef) and node.name == function_name and parent.name == class_name:
                                 code = ast.unparse(node)
                                 save_to_database(class_name, function_name, code)
-                    
+
+
+class Database():
+    # This class is for handling the database operations
+    # TODO: Add support for other database engines
+    def __init__(self, database_engine="SQLite3", database_file_path="database.db"):
+        self.database_engine = database_engine
+        self.database_file_path = database_file_path
+        self.conn = sqlite3.connect(self.database_file_path)
+        self.cursor = self.conn.cursor()
+        self.create_database()
+        self.conn.commit()
+        self.conn.close()
+
+    def create_database(self):
+        pass
+
+    def save_to_database(self, class_name, function_name, code):
+        self.conn = sqlite3.connect(self.database_file_path)
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("DELETE FROM functions")
+        self.cursor.execute("INSERT INTO functions VALUES (?, ?, ?)", (class_name, function_name, code))
+        self.conn.commit()
+        self.conn.close()
+
+    def print_from_database(self):
+        self.conn = sqlite3.connect(self.database_file_path)
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("SELECT * FROM functions")
+        for row in self.cursor.fetchall():
+            print(row)
+        self.conn.close()
+
 
 def save_to_database(class_name, function_name, code):
     # Connect to the database

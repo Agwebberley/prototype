@@ -2,7 +2,7 @@
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-
+import Customers
 
 from Items.models import items
 #from Customers.models import customers
